@@ -5,7 +5,7 @@ angular.module('bahmni.common.offline')
             function (offlineSyncService, offlineService) {
                 return function (isInitSync) {
                     if (offlineService.isOfflineApp()) {
-                        return offlineSyncService.sync(isInitSync);
+                      return offlineSyncService.sync(isInitSync);
                     }
                 };
             }

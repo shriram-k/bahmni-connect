@@ -1,0 +1,39 @@
+<div class="dashboard">
+  <header class="reg-header">
+      <div class="reg-header-right fr">
+          Syncing Rules
+      </div>
+  </header>
+  <section class="reg-search-wrapper">
+    <section class="reg-search">
+      <form name="syncRules" class="simple-form-ui clearfix">
+        <label for="syncRules">Sync Rules</label>
+        <div class="search-patient-id fl">
+          <input tabindex="2" class="fl" type="text" id="patientId" ng-model="syncRules.patientId" focus-me="true" placeholder="PatientId">
+          <input tabindex="3" class="fl" type="text" id="provinceName" ng-model="syncRules.provinceName" focus-me="true" placeholder="provinceName">
+          <input tabindex="4" class="fl" type="text" id="districtName" ng-model="syncRules.districtName" focus-me="true" placeholder="districtName">
+        </div>
+        <div class="reg-search">
+          <input tabindex="5" class="fl" type="checkbox" id="pullEncounters" ng-model="syncRules.pullEncounters">
+          <label for="pullEncounters" class="fl">Pull Encounters</label>
+            <input type="file" id="myFile" />
+            <button type="button" ng-click="readFromFile()">Save from:</button>
+        </div>
+        <div class="reg-search">
+          <button tabindex="6" class="fl" type="submit" ng-click="estimate()">Estimate</button>
+          <button tabindex="7" class="fl" type="submit" ng-click="import()">Start Import</button>
+          <button tabindex="8" class="fl" type="submit" ng-click="exportMetaData()">Export MetaData</button>
+          <button tabindex="9" class="fl" type="submit" ng-click="clearMetaData()">CLear Metadata</button>
+        </div>
+        <span ng-hide="noEvents">{{events}} events to be synced</span>
+        <div class="note-container no-search-results" ng-show="noEvents">
+          <div class="note warning">
+            <div class="text">
+              <p>{{noResultsMessage | translate:patientIdentifier }}</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+  </section>
+</div>
