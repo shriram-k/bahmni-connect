@@ -49,5 +49,20 @@ describe('patientDbService tests', function () {
         });
     });
 
+    it("get count of patients from patient table from database", function(done){
+        var schemaBuilder = lf.schema.create('BahmniTest', 1);
+        Bahmni.Tests.OfflineDbUtils.createTable(schemaBuilder, Bahmni.Common.Offline.SchemaDefinitions.Patient);
+        jasmine.getFixtures().fixturesPath = 'base/test/data';
+        var patientJson = JSON.parse(readFixtures('patient.json'));
+        patientJson.patient.voided = true;
+        schemaBuilder.connect().then(function(db){
+            patientDbService.insertPatientData(db, patientJson).then(function(){
+                patientDbService.getPatientsCount(db).then(function(result){
+                    expect(result).toBe(1);
+                    done();
+                });
+            });
+        });
+    });
 
 });

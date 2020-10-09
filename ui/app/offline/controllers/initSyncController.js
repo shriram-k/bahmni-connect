@@ -13,13 +13,7 @@ angular.module('bahmni.common.offline')
                 dbNameService.getDbName(username, location).then(function (dbName) {
                     return dbName;
                 }).then(function (dbName) {
-                    offlinePull(true).then(function () {
-                        setInitialStatus("complete", dbName);
-                        deferred.resolve();
-                    }, function () {
-                        setInitialStatus("notComplete", dbName);
-                        deferred.reject();
-                    });
+                   deferred.resolve();
                 });
                 return deferred.promise;
             };
