@@ -35,12 +35,23 @@ angular.module('bahmni.common.offline')
                 return $q.when();
             };
 
-            var saveOfflineConcepts = function (offlineConcepts, count) {
+            var saveAddressHierarchy = function (addressHierarchies, count) {
+                if (count != addressHierarchies.length) {
+                    return saveData({category: 'patient'}, {data: addressHierarchies[count]}).then(function () {
+                        updateSavedEventsCount('addressHierarchy');
+                        return (offlineService.isAndroidApp() && count % 10 == 0) ?
+                            $timeout(saveAddressHierarchy, 100, true, addressHierarchies, ++count) : saveAddressHierarchy(addressHierarchies, ++count);
+                    });
+                }
+                return $q.when();
+            };
+
+            var saveMetaData = function (offlineConcepts, count) {
                 if (count != offlineConcepts.length) {
                     return saveData({category: 'offline-concepts'}, {data: offlineConcepts[count]}).then(function () {
                         updateSavedEventsCount('offline-concepts');
                         return (offlineService.isAndroidApp() && count % 10 == 0) ?
-                            $timeout(saveOfflineConcepts, 100, true, offlineConcepts, ++count) : saveOfflineConcepts(offlineConcepts, ++count);
+                            $timeout(saveMetaData, 100, true, offlineConcepts, ++count) : saveMetaData(patofflineConceptsients, ++count);
                     });
                 }
                 return $q.when();
@@ -142,9 +153,10 @@ angular.module('bahmni.common.offline')
                     return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + fileNames[count]).then(function (response) {
                         updatePendingEventsCount("offline-concepts", response.data.offlineconcepts.length);
                         var lastReadEventUuid = response.data.lastReadEventUuid;
-                        return savePatients(response.data.offlineconcepts, 0).then(function () {
+                        console.log("uuid from offlineConcepts",lastReadEventUuid);
+                        return saveMetaData(response.data.offlineconcepts, 0).then(function () {
                             updateSyncedFileNames(fileNames[count], dbName);
-                            return getPatientDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
+                            return getOfflineConceptsDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
                         });
                     });
                 }
@@ -184,11 +196,12 @@ angular.module('bahmni.common.offline')
             var getAddressHierarchyDataForFiles = function (fileNames, count, eventLogUuid, dbName) {
                 if (count !== fileNames.length) {
                     return $http.get(Bahmni.Common.Constants.preprocessedAddressHierarchyUrl + fileNames[count]).then(function (response) {
-                        updatePendingEventsCount("addressHierarchy", response.data.patients.length);
+                        updatePendingEventsCount("addressHierarchy", response.data.addressHierarchy.length);
                         var lastReadEventUuid = response.data.lastReadEventUuid;
-                        return savePatients(response.data.patients, 0).then(function () {
+                        console.log("uuid from addressHeirarchy",lastReadEventUuid);
+                        return saveAddressHierarchy(response.data.addressHierarchy, 0).then(function () {
                             updateSyncedFileNames(fileNames[count], dbName);
-                            return getPatientDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
+                            return getAddressHierarchyDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
                         });
                     });
                 }
