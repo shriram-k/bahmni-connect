@@ -132,24 +132,49 @@ angular.module('bahmni.common.offline')
                 if (_.includes(offlineService.getItem("eventLogCategories"), "transactionalData")) {
                     return migrate(isInitSync);
                 }
-                return syncData(isInitSync);
+
+                offlineDbService.getPatientsCount().then(function(patientsCount){
+                    return syncData(isInitSync, patientsCount);    
+                })
             };
 
-            var syncData = function (isInitSync) {
+            var syncData = function (isInitSync, patientsCount) {
                 var promises = [];
                 categories = offlineService.getItem("eventLogCategories");
                 initializeInitSyncInfo(categories);
-                _.forEach(categories, function (category) {
-                    if (!isInitSync || category !== "patient") {
-                        promises.push(syncForCategory(category, isInitSync));
-                    }
-                });
-                if (isInitSync && _.indexOf(categories, 'patient') !== -1) {
-                    var patientPromise = savePatientDataFromFile().then(function (uuid) {
-                        return updateMarker({uuid: uuid}, "patient");
+                
+                if (isInitSync) {
+                    _.forEach(categories, function (category) {
+                        if (category === "forms") {
+                            promises.push(syncForCategory(category, isInitSync));
+                        }
                     });
-                    promises.push(patientPromise);
+                } else {
+                    if (patientsCount === 0) {
+                        if (_.indexOf(categories, 'patient') !== -1) {
+                            var patientPromise = savePatientDataFromFile().then(function (uuid) {
+                                console.log("Saving patient data from zip");
+                                return updateMarker({ uuid: uuid }, "patient");
+                            });
+                            promises.push(patientPromise);
+                        }
+
+                        _.forEach(categories, function (category) {
+                            if (category === "encounter") {
+                                promises.push(syncForCategory(category, isInitSync));
+                                console.log("Diff Syncing: " + category);
+                            }
+                        });
+                    
+                    } else {
+                        _.forEach(categories, function (category) {
+                            promises.push(syncForCategory(category, isInitSync));
+                            console.log("Diff Syncing: " + category);
+                        });
+                    }
                 }
+
+
                 return $q.all(promises);
             };
 
@@ -176,20 +201,25 @@ angular.module('bahmni.common.offline')
 
             var syncForMarker = function (category, marker, isInitSync) {
                 return eventLogService.getEventsFor(category, marker).then(function (response) {
+                    console.log("response: ",response)
                     var events = response.data ? response.data["events"] : undefined;
                     if (events == undefined || events.length == 0) {
+                        console.log("ln 182");
                         endSync(stages++);
                         return;
                     }
+
                     updatePendingEventsCount(category, response.data.pendingEventsCount);
                     return readEvent(events, 0, category, isInitSync);
                 }, function () {
+                    console.log("ln 190");
                     endSync(-1);
                     return createRejectedPromise();
                 });
             };
 
             var readEvent = function (events, index, category, isInitSync) {
+                console.log("In readEvent");
                 if (events.length == index && events.length > 0) {
                     return syncForCategory(category, isInitSync);
                 }
