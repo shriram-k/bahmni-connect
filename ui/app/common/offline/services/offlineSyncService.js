@@ -4,7 +4,7 @@ angular.module('bahmni.common.offline')
     .service('offlineSyncService', ['eventLogService', 'offlineDbService', '$q', 'offlineService', 'androidDbService',
         '$rootScope', 'loggingService', '$http', '$timeout', 'dbNameService', 'messagingService',
         function (eventLogService, offlineDbService, $q, offlineService, androidDbService, $rootScope, loggingService,
-                  $http, $timeout, dbNameService, messagingService) {
+            $http, $timeout, dbNameService, messagingService) {
             var stages, categories;
 
             var createRejectedPromise = function () {
@@ -220,7 +220,7 @@ angular.module('bahmni.common.offline')
                 }
 
                 offlineDbService.getPatientsCount().then(function(patientsCount){
-                    return syncData(isInitSync, patientsCount);    
+                    return syncData(isInitSync, patientsCount);
                 })
             };
 
@@ -228,7 +228,7 @@ angular.module('bahmni.common.offline')
                 var promises = [];
                 categories = offlineService.getItem("eventLogCategories");
                 initializeInitSyncInfo(categories);
-               
+          
                 if (isInitSync) {
                     _.forEach(categories, function (category) {
                         if (category === "forms") {
@@ -251,7 +251,7 @@ angular.module('bahmni.common.offline')
                                 console.log("Diff Syncing: " + category);
                             }
                         });
-                    
+
                     } else {
                         _.forEach(categories, function (category) {
                             promises.push(syncForCategory(category, isInitSync));
@@ -275,7 +275,11 @@ angular.module('bahmni.common.offline')
                         });
                         promises.push(addressHierarchyPromise);
                     }
-                return $q.all(promises);
+
+
+                return $q.all(promises).then(function () {
+                    endSync(-1);
+                });
             };
 
             var syncForCategory = function (category, isInitSync) {
@@ -301,25 +305,17 @@ angular.module('bahmni.common.offline')
 
             var syncForMarker = function (category, marker, isInitSync) {
                 return eventLogService.getEventsFor(category, marker).then(function (response) {
-                    console.log("response: ",response)
                     var events = response.data ? response.data["events"] : undefined;
-                    if (events == undefined || events.length == 0) {
-                        console.log("ln 182");
-                        endSync(stages++);
-                        return;
-                    }
 
                     updatePendingEventsCount(category, response.data.pendingEventsCount);
                     return readEvent(events, 0, category, isInitSync);
                 }, function () {
-                    console.log("ln 190");
                     endSync(-1);
                     return createRejectedPromise();
                 });
             };
 
             var readEvent = function (events, index, category, isInitSync) {
-                console.log("In readEvent");
                 if (events.length == index && events.length > 0) {
                     return syncForCategory(category, isInitSync);
                 }
@@ -387,50 +383,50 @@ angular.module('bahmni.common.offline')
             var saveData = function (event, response) {
                 var deferrable = $q.defer();
                 switch (event.category) {
-                case 'patient':
-                    offlineDbService.getAttributeTypes().then(function (attributeTypes) {
-                        mapAttributesToPostFormat(response.data.person.attributes, attributeTypes);
-                        mapIdentifiers(response.data.identifiers).then(function () {
-                            offlineDbService.createPatient({patient: response.data}).then(function () {
-                                deferrable.resolve();
-                            }, function (response) {
-                                deferrable.reject(response);
+                    case 'patient':
+                        offlineDbService.getAttributeTypes().then(function (attributeTypes) {
+                            mapAttributesToPostFormat(response.data.person.attributes, attributeTypes);
+                            mapIdentifiers(response.data.identifiers).then(function () {
+                                offlineDbService.createPatient({patient: response.data}).then(function () {
+                                    deferrable.resolve();
+                                }, function (response) {
+                                    deferrable.reject(response);
+                                });
                             });
                         });
-                    });
-                    break;
-                case 'Encounter':
-                case 'SHREncounter':
-                    offlineDbService.createEncounter(response.data).then(function () {
-                        deferrable.resolve();
-                    });
-                    break;
-                case 'LabOrderResults':
-                    var patientUuid = event.object.match(Bahmni.Common.Constants.uuidRegex)[0];
-                    offlineDbService.insertLabOrderResults(patientUuid, response.data).then(function () {
-                        deferrable.resolve();
-                    });
-                    break;
+                        break;
+                    case 'Encounter':
+                    case 'SHREncounter':
+                        offlineDbService.createEncounter(response.data).then(function () {
+                            deferrable.resolve();
+                        });
+                        break;
+                    case 'LabOrderResults':
+                        var patientUuid = event.object.match(Bahmni.Common.Constants.uuidRegex)[0];
+                        offlineDbService.insertLabOrderResults(patientUuid, response.data).then(function () {
+                            deferrable.resolve();
+                        });
+                        break;
 
-                case 'offline-concepts':
-                    offlineDbService.insertConceptAndUpdateHierarchy({"results": [response.data]}).then(function () {
+                    case 'offline-concepts':
+                        offlineDbService.insertConceptAndUpdateHierarchy({"results": [response.data]}).then(function () {
+                            deferrable.resolve();
+                        });
+                        break;
+                    case 'addressHierarchy':
+                    case 'parentAddressHierarchy':
+                        offlineDbService.insertAddressHierarchy(response.data).then(function () {
+                            deferrable.resolve();
+                        });
+                        break;
+                    case 'forms':
+                        offlineDbService.insertForm(response.data).then(function () {
+                            deferrable.resolve();
+                        });
+                        break;
+                    default:
                         deferrable.resolve();
-                    });
-                    break;
-                case 'addressHierarchy':
-                case 'parentAddressHierarchy':
-                    offlineDbService.insertAddressHierarchy(response.data).then(function () {
-                        deferrable.resolve();
-                    });
-                    break;
-                case 'forms':
-                    offlineDbService.insertForm(response.data).then(function () {
-                        deferrable.resolve();
-                    });
-                    break;
-                default:
-                    deferrable.resolve();
-                    break;
+                        break;
                 }
                 return deferrable.promise;
             };
