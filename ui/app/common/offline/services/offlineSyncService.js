@@ -122,14 +122,8 @@ angular.module('bahmni.common.offline')
 
             var saveMetaDataFromFile = function () {
                 var defer = $q.defer();
-                // offlineDbService.getMarker('offline-concepts').then(function (marker) {
-                //     if (marker.lastReadEventUuid) {
-                //         return defer.resolve(marker.lastReadEventUuid);
-                //     }
-
                     return getDbName().then(function (dbName) {
                         var eventLogUuid;
-                        //var promises = marker.filters.map(function (filter) {
                             var syncedInfo = offlineService.getItem("synced") || {};
                             var synced = syncedInfo[dbName] || [];
                             return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsFilesUrl + "offline-concepts").then(function (response) {
@@ -140,13 +134,7 @@ angular.module('bahmni.common.offline')
                                 endSync(-1);
                                 return defer.reject();
                             });
-                        //});
-                        return $q.all(promises).then(function () {
-                            return defer.resolve(eventLogUuid);
-                        });
                     });
-                //});
-                //return defer.promise;
             };
 
             var getOfflineConceptsDataForFiles = function (fileNames, count, eventLogUuid, dbName) {
@@ -166,14 +154,8 @@ angular.module('bahmni.common.offline')
 
             var saveAddressHierarchyDataFromFile = function () {
                 var defer = $q.defer();
-                // offlineDbService.getMarker('addressHierarchy').then(function (marker) {
-                //     if (marker.lastReadEventUuid) {
-                //         return defer.resolve(marker.lastReadEventUuid);
-                //     }
-
                     return getDbName().then(function (dbName) {
                         var eventLogUuid;
-                        //var promises = marker.filters.map(function (filter) {
                             var syncedInfo = offlineService.getItem("synced") || {};
                             var synced = syncedInfo[dbName] || [];
                             return $http.get(Bahmni.Common.Constants.preprocessedAddressHierarchyFilesUrl + "AddressHierarchy").then(function (response) {
@@ -184,13 +166,7 @@ angular.module('bahmni.common.offline')
                                 endSync(-1);
                                 return defer.reject();
                             });
-                       // });
-                        return $q.all(promises).then(function () {
-                            return defer.resolve(eventLogUuid);
-                        });
                     });
-                //});
-                //return defer.promise;
             };
 
             var getAddressHierarchyDataForFiles = function (fileNames, count, eventLogUuid, dbName) {
@@ -254,10 +230,6 @@ angular.module('bahmni.common.offline')
                         promises.push(syncForCategory(category, isInitSync));
                     }
                 });
-               
-                    // promises.push(syncForCategory("addressHierarchy", isInitSync));
-                     //promises.push(syncForCategory("offline-concepts", isInitSync));
-                    // promises.push(syncForCategory("parentAddressHierarchy", isInitSync));
 
                 // if (isInitSync && _.indexOf(categories, 'patient') !== -1) {
                 //     var patientPromise = savePatientDataFromFile().then(function (uuid) {
@@ -267,14 +239,15 @@ angular.module('bahmni.common.offline')
                 // }
 
                 if (isInitSync && _.indexOf(categories, 'offline-concepts') !== -1) {
-                    $rootScope.initSyncInfo.message = "OfflineConcepts & AddressHierarchy";
+                    $rootScope.initSyncInfo.message = "Metadata";
                     var offlineConceptsPromise = saveMetaDataFromFile().then(function (uuid) {
+                        console.log("uuid is ->",uuid);
                       return updateMarker({ uuid: uuid }, "offline-concepts");
                     });
                     promises.push(offlineConceptsPromise);
                 }
                 if (isInitSync && _.indexOf(categories, 'addressHierarchy') !== -1) {
-                    $rootScope.initSyncInfo.message = "OfflineConcepts & AddressHierarchy";
+                    $rootScope.initSyncInfo.message = "Metadata";
                         var addressHierarchyPromise = saveAddressHierarchyDataFromFile().then(function (uuid) {
                           return updateMarker({ uuid: uuid }, "addressHierarchy");
                         });
