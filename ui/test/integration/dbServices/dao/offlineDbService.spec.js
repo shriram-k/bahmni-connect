@@ -11,7 +11,7 @@ describe('OfflineDbService ', function () {
     beforeEach(function () {
         module('bahmni.common.offline');
         module(function ($provide) {
-            patientDbService = jasmine.createSpyObj('patientDbService', ['getPatientByUuid', 'insertPatientData']);
+            patientDbService = jasmine.createSpyObj('patientDbService', ['getPatientByUuid', 'insertPatientData', 'getPatientsCount']);
             patientIdentifierDbService = jasmine.createSpyObj('patientIdentifierDbService', ['insertPatientIdentifiers']);
             patientAddressDbService = jasmine.createSpyObj('patientAddressDbService', ['insertAddress']);
             patientAttributeDbService = jasmine.createSpyObj('patientAttributeDbService', ['insertAttributes', 'getAttributeTypes']);
@@ -405,6 +405,26 @@ describe('OfflineDbService ', function () {
             });
         });
 
+
+    it("should return patients count from patient table", function (done) {
+        var schemaBuilder = lf.schema.create('BahmniOfflineDb', 1);
+        schemaBuilder.connect().then(function (db) {
+        offlineDbService.init(db);
+
+        patientDbService.getPatientsCount.and.callFake(function () {
+            var deferred1 = $q.defer();
+            deferred1.resolve({patient: "patientInfo"});
+            return deferred1.promise;
+        });
+
+        offlineDbService.getPatientsCount().then(function () {
+        }, function (response) {
+            expect(response.length).toBe(5);
+            done();
+            });
+        })
+    });
+
         it("should call createPatient with given patientData", function (done) {
             var schemaBuilder = lf.schema.create('BahmniOfflineDb', 1);
             schemaBuilder.connect().then(function (db) {
@@ -431,6 +451,12 @@ describe('OfflineDbService ', function () {
                 });
 
                 patientDbService.getPatientByUuid.and.callFake(function () {
+                    var deferred1 = $q.defer();
+                    deferred1.resolve({patient: "patientInfo"});
+                    return deferred1.promise;
+                });
+
+                patientDbService.getPatientsCount.and.callFake(function () {
                     var deferred1 = $q.defer();
                     deferred1.resolve({patient: "patientInfo"});
                     return deferred1.promise;

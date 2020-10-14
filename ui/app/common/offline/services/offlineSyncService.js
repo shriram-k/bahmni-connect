@@ -219,12 +219,10 @@ angular.module('bahmni.common.offline')
                     return migrate(isInitSync);
                 }
 
-                offlineDbService.getPatientsCount().then(function(patientsCount){
-                    return syncData(isInitSync, patientsCount);
-                })
+                syncData(isInitSync);
             };
 
-            var syncData = function (isInitSync, patientsCount) {
+            var syncData = function (isInitSync) {
                 var promises = [];
                 categories = offlineService.getItem("eventLogCategories");
                 initializeInitSyncInfo(categories);
@@ -236,28 +234,33 @@ angular.module('bahmni.common.offline')
                         }
                     });
                 } else {
-                    if (patientsCount === 0) {
-                        if (_.indexOf(categories, 'patient') !== -1) {
-                            var patientPromise = savePatientDataFromFile().then(function (uuid) {
-                                console.log("Saving patient data from zip");
-                                return updateMarker({ uuid: uuid }, "patient");
-                            });
-                            promises.push(patientPromise);
-                        }
-
-                        _.forEach(categories, function (category) {
-                            if (category === "encounter") {
-                                promises.push(syncForCategory(category, isInitSync));
-                                console.log("Diff Syncing: " + category);
+                    offlineDbService.getPatientsCount().then(
+                        function (patientsCount) {
+                            if (patientsCount === 0) {
+                                if (_.indexOf(categories, 'patient') !== -1) {
+                                    var patientPromise = savePatientDataFromFile().then(function (uuid) {
+                                        console.log("Saving patient data from zip");
+                                        return updateMarker({ uuid: uuid }, "patient");
+                                    });
+                                    promises.push(patientPromise);
+                                }
+        
+                                _.forEach(categories, function (category) {
+                                    if (category === "encounter") {
+                                        promises.push(syncForCategory(category, isInitSync));
+                                        console.log("Diff Syncing: " + category);
+                                    }
+                                });
+        
+                            } else {
+                                _.forEach(categories, function (category) {
+                                    promises.push(syncForCategory(category, isInitSync));
+                                    console.log("Diff Syncing: " + category);
+                                });
                             }
-                        });
-
-                    } else {
-                        _.forEach(categories, function (category) {
-                            promises.push(syncForCategory(category, isInitSync));
-                            console.log("Diff Syncing: " + category);
-                        });
-                    }
+                            return;
+                        }
+                        );
                 }
               
               if (isInitSync && _.indexOf(categories, 'offline-concepts') !== -1) {
