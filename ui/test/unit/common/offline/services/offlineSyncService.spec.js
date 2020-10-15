@@ -404,6 +404,137 @@ describe('OfflineSyncService', function () {
             expect(offlineService.setItem).toHaveBeenCalledWith("synced", {dbName:["202020-1.json.gz", "202020-2.json.gz"]})
         });
 
+        it('should read the OfflineConcepts event from zip file', function () {
+            var localStorage = {};
+            var category = 'offline-concepts';
+            var concept1 = concept;
+            var concept2 = concept;
+            var response1 = {lastReadEventUuid: "lastEventUuid1", offlineconcepts: [concept1]};
+            var response2= {lastReadEventUuid: "lastEventUuid2", offlineconcepts: [concept2]};
+            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedOfflineConceptsFilesUrl + "offline-concepts").respond(200, ["offline-concepts-1.json.gz", "offline-concepts-2.json.gz"]);
+            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + "offline-concepts-1.json.gz").respond(200, response1);
+            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + "offline-concepts-2.json.gz").respond(200, response2);
+
+            var marker = {markerName: 'offline-concepts', filters: ["offline-concepts"]};
+
+            spyOn(offlineService, 'getItem').and.callFake(function (key) {
+                if(key == "LoginInformation")
+                    return {currentLocation:{display:"dbName"}};
+                if(key == "userData")
+                    return {results: [{username:"username"}]};
+                if(key == "synced")
+                    return localStorage.synced;
+                return [category];
+            });
+            spyOn(dbNameService, 'getDbName').and.returnValue(q.when("dbName"));
+            spyOn(offlineService, 'setItem').and.callFake(function (key, value) {
+                localStorage[key] = value;
+            });
+            spyOn(offlineDbService, 'getMarker').and.callThrough(function () {
+                return {
+                    then: function () {
+                        return marker;
+                    }
+                }
+            });
+            spyOn(eventLogService, 'getEventsFor').and.callThrough();
+            spyOn(eventLogService, 'getDataForUrl').and.callThrough();
+            spyOn(offlineDbService, 'insertMarker').and.callFake(function (name, uuid, filters) {
+                marker.lastReadEventUuid = uuid;
+                return {lastReadTime: new Date()}
+            });
+            spyOn(offlineDbService, 'insertAddressHierarchy').and.callThrough();
+            spyOn(offlineDbService, 'createPatient').and.callThrough();
+            spyOn(offlineDbService, 'insertConceptAndUpdateHierarchy').and.callThrough();
+            spyOn(offlineDbService, 'createEncounter').and.callThrough();
+            spyOn(offlineDbService, 'insertLabOrderResults').and.callThrough();
+
+            offlineSyncService.sync(true);
+            $rootScope.$digest();
+            httpBackend.flush();
+
+            expect(offlineDbService.getMarker.calls.count()).toBe(1);
+            expect(offlineDbService.getMarker).toHaveBeenCalledWith(category);
+            expect(eventLogService.getEventsFor.calls.count()).toBe(0);
+
+            expect(offlineDbService.insertMarker).toHaveBeenCalledWith(category, "lastEventUuid2", [202020]);
+            expect(offlineDbService.insertMarker.calls.count()).toBe(1);
+            expect(offlineDbService.insertConceptAndUpdateHierarchy.calls.count()).toBe(2);
+            expect(offlineDbService.createEncounter.calls.count()).toBe(0);
+            expect(offlineDbService.insertLabOrderResults.calls.count()).toBe(0);
+            expect(eventLogService.getDataForUrl.calls.count()).toBe(0);
+            expect(dbNameService.getDbName.calls.count()).toBe(1);
+            expect(offlineService.getItem).toHaveBeenCalledWith("synced");
+            expect(offlineService.setItem.calls.count()).toBe(2);
+            expect(offlineService.setItem).toHaveBeenCalledWith("synced", {dbName:["offline-concepts-1.json.gz", "offline-concepts-2.json.gz"]})
+        });
+
+
+        it('should read the AddressHierarchy event from zip file', function () {
+            var localStorage = {};
+            var category = 'addressHierarchy';
+            var addressHierarchy1 = concept;
+            var addressHierarchy2 = concept;
+            var response1 = {lastReadEventUuid: "lastEventUuid1", addressHierarchy: [addressHierarchy1]};
+            var response2= {lastReadEventUuid: "lastEventUuid2", addressHierarchy: [addressHierarchy2]};
+            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedAddressHierarchyFilesUrl + "AddressHierarchy").respond(200, ["AddressHierarchy-1.json.gz","AddressHierarchy-2.json.gz"]);
+            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedAddressHierarchyUrl + "AddressHierarchy-1.json.gz").respond(200, response1);
+            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedAddressHierarchyUrl + "AddressHierarchy-2.json.gz").respond(200, response2);
+
+            var marker = {markerName: 'addressHierarchy', filters: ["addressHierarchy"]};
+
+            spyOn(offlineService, 'getItem').and.callFake(function (key) {
+                if(key == "LoginInformation")
+                    return {currentLocation:{display:"dbName"}};
+                if(key == "userData")
+                    return {results: [{username:"username"}]};
+                if(key == "synced")
+                    return localStorage.synced;
+                return [category];
+            });
+            spyOn(dbNameService, 'getDbName').and.returnValue(q.when("dbName"));
+            spyOn(offlineService, 'setItem').and.callFake(function (key, value) {
+                localStorage[key] = value;
+            });
+            spyOn(offlineDbService, 'getMarker').and.callThrough(function () {
+                return {
+                    then: function () {
+                        return marker;
+                    }
+                }
+            });
+            spyOn(eventLogService, 'getEventsFor').and.callThrough();
+            spyOn(eventLogService, 'getDataForUrl').and.callThrough();
+            spyOn(offlineDbService, 'insertMarker').and.callFake(function (name, uuid, filters) {
+                marker.lastReadEventUuid = uuid;
+                return {lastReadTime: new Date()}
+            });
+            spyOn(offlineDbService, 'insertAddressHierarchy').and.callThrough();
+            spyOn(offlineDbService, 'createPatient').and.callThrough();
+            spyOn(offlineDbService, 'insertConceptAndUpdateHierarchy').and.callThrough();
+            spyOn(offlineDbService, 'createEncounter').and.callThrough();
+            spyOn(offlineDbService, 'insertLabOrderResults').and.callThrough();
+
+            offlineSyncService.sync(true);
+            $rootScope.$digest();
+            httpBackend.flush();
+
+            expect(offlineDbService.getMarker.calls.count()).toBe(1);
+            expect(offlineDbService.getMarker).toHaveBeenCalledWith(category);
+            expect(eventLogService.getEventsFor.calls.count()).toBe(0);
+
+            expect(offlineDbService.insertMarker).toHaveBeenCalledWith(category, "lastEventUuid2", [202020]);
+            expect(offlineDbService.insertMarker.calls.count()).toBe(1);
+            expect(offlineDbService.insertAddressHierarchy.calls.count()).toBe(2);
+            expect(offlineDbService.createEncounter.calls.count()).toBe(0);
+            expect(offlineDbService.insertLabOrderResults.calls.count()).toBe(0);
+            expect(eventLogService.getDataForUrl.calls.count()).toBe(0);
+            expect(dbNameService.getDbName.calls.count()).toBe(1);
+            expect(offlineService.getItem).toHaveBeenCalledWith("synced");
+            expect(offlineService.setItem.calls.count()).toBe(2);
+            expect(offlineService.setItem).toHaveBeenCalledWith("synced", {dbName:["AddressHierarchy-1.json.gz","AddressHierarchy-2.json.gz"]})
+        });
+
         it('should read only remaining patient zip files', function () {
             var localStorage = {synced:{dbName:["202020-1.json.gz"]}};
             var category = 'patient';

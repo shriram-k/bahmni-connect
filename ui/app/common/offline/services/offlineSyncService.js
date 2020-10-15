@@ -129,6 +129,7 @@ angular.module('bahmni.common.offline')
                             return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsFilesUrl + "offline-concepts").then(function (response) {
                                 return getOfflineConceptsDataForFiles(getRemainingFileNames(response.data, synced), 0, null, dbName).then(function (uuid) {
                                     eventLogUuid = uuid;
+                                    return $q.when(eventLogUuid);
                                 });
                             }).catch(function () {
                                 endSync(-1);
@@ -161,6 +162,7 @@ angular.module('bahmni.common.offline')
                             return $http.get(Bahmni.Common.Constants.preprocessedAddressHierarchyFilesUrl + "AddressHierarchy").then(function (response) {
                                 return getAddressHierarchyDataForFiles(getRemainingFileNames(response.data, synced), 0, null, dbName).then(function (uuid) {
                                     eventLogUuid = uuid;
+                                    return $q.when(eventLogUuid);
                                 });
                             }).catch(function () {
                                 endSync(-1);
