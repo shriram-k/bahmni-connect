@@ -406,24 +406,30 @@ describe('OfflineDbService ', function () {
         });
 
 
-    it("should return patients count from patient table", function (done) {
-        var schemaBuilder = lf.schema.create('BahmniOfflineDb', 1);
-        schemaBuilder.connect().then(function (db) {
-        offlineDbService.init(db);
-
-        patientDbService.getPatientsCount.and.callFake(function () {
-            var deferred1 = $q.defer();
-            deferred1.resolve({patient: "patientInfo"});
-            return deferred1.promise;
-        });
-
-        offlineDbService.getPatientsCount().then(function () {
-        }, function (response) {
-            expect(response.length).toBe(5);
-            done();
+        it("should return patients count from patient table", function (done) {
+            var schemaBuilder = lf.schema.create('BahmniOfflineDb', 1);
+    
+            patientDbService.getPatientsCount.and.callFake(function () {
+                var deferred1 = $q.defer();
+                var patientData = [
+                    {patient: { uuid: "patientUuid1" }},
+                    {patient: { uuid: "patientUuid2" }},
+                    {patient: { uuid: "patientUuid3" }},
+                    ];
+                    deferred1.resolve(patientData);
+                    return deferred1.promise;
+                });
+    
+                schemaBuilder.connect().then(function (db) {
+                    offlineDbService.init(db);
+    
+                    offlineDbService.getPatientsCount(db).then(function (patientData) {
+                        expect(patientData.length).toBe(3);
+                        expect(patientDbService.getPatientsCount).toHaveBeenCalledWith(db);
+                        done();
+                    });
+                });
             });
-        })
-    });
 
         it("should call createPatient with given patientData", function (done) {
             var schemaBuilder = lf.schema.create('BahmniOfflineDb', 1);
