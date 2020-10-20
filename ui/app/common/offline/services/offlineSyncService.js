@@ -22,7 +22,6 @@ angular.module('bahmni.common.offline')
                     $rootScope.initSyncInfo[category].savedEventsCount = 0;
                 });
                 $rootScope.initSyncInfo.savedEvents = 0;
-                $rootScope.initSyncInfo.message = "";
             };
 
             var savePatients = function (patients, count) {
@@ -46,7 +45,6 @@ angular.module('bahmni.common.offline')
                 }
                 return $q.when();
             };
-
             var saveMetaData = function (offlineConcepts, count) {
                 if (count != offlineConcepts.length) {
                     return saveData({ category: 'offline-concepts' }, { data: offlineConcepts[count] }).then(function () {
@@ -129,6 +127,7 @@ angular.module('bahmni.common.offline')
                     return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsFilesUrl + "offline-concepts").then(function (response) {
                         return getOfflineConceptsDataForFiles(getRemainingFileNames(response.data, synced), 0, null, dbName).then(function (uuid) {
                             eventLogUuid = uuid;
+                            return eventLogUuid;
                         });
                     }).catch(function () {
                         endSync(-1);
@@ -136,13 +135,12 @@ angular.module('bahmni.common.offline')
                     });
                 });
             };
-
             var getOfflineConceptsDataForFiles = function (fileNames, count, eventLogUuid, dbName) {
                 if (count !== fileNames.length) {
                     return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + fileNames[count]).then(function (response) {
                         updatePendingEventsCount("offline-concepts", response.data.offlineconcepts.length);
                         var lastReadEventUuid = response.data.lastReadEventUuid;
-                        console.log("uuid from offlineConcepts",lastReadEventUuid);
+                        console.log("uuid from offlineConcepts", lastReadEventUuid);
                         return saveMetaData(response.data.offlineconcepts, 0).then(function () {
                             updateSyncedFileNames(fileNames[count], dbName);
                             return getOfflineConceptsDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
@@ -161,6 +159,7 @@ angular.module('bahmni.common.offline')
                     return $http.get(Bahmni.Common.Constants.preprocessedAddressHierarchyFilesUrl + "AddressHierarchy").then(function (response) {
                         return getAddressHierarchyDataForFiles(getRemainingFileNames(response.data, synced), 0, null, dbName).then(function (uuid) {
                             eventLogUuid = uuid;
+                            return eventLogUuid;
                         });
                     }).catch(function () {
                         endSync(-1);
@@ -168,7 +167,6 @@ angular.module('bahmni.common.offline')
                     });
                 });
             };
-
             var getAddressHierarchyDataForFiles = function (fileNames, count, eventLogUuid, dbName) {
                 if (count !== fileNames.length) {
                     return $http.get(Bahmni.Common.Constants.preprocessedAddressHierarchyUrl + fileNames[count]).then(function (response) {
@@ -225,7 +223,6 @@ angular.module('bahmni.common.offline')
                 var promises = [];
                 categories = offlineService.getItem("eventLogCategories");
                 initializeInitSyncInfo(categories);
-
                 if (isInitSync) {
                     _.forEach(categories, function (category) {
                         if (category === "forms") {
@@ -235,6 +232,7 @@ angular.module('bahmni.common.offline')
 
                     if (isInitSync && _.indexOf(categories, 'offline-concepts') !== -1) {
                         $rootScope.initSyncInfo.message = "Metadata";
+                        console.log("called offline sync");
                         var offlineConceptsPromise = saveMetaDataFromFile().then(function (uuid) {
                             return updateMarker({ uuid: uuid }, "offline-concepts");
                         });
@@ -242,10 +240,12 @@ angular.module('bahmni.common.offline')
                     }
                     if (isInitSync && _.indexOf(categories, 'addressHierarchy') !== -1) {
                         $rootScope.initSyncInfo.message = "Metadata";
+                        console.log("called address sync");
                         var addressHierarchyPromise = saveAddressHierarchyDataFromFile().then(function (uuid) {
                             return updateMarker({ uuid: uuid }, "addressHierarchy");
                         });
                         promises.push(addressHierarchyPromise);
+                        console.log("called address sync-2");
                     }
                 } else {
                     offlineDbService.getPatientsCount().then(
@@ -268,7 +268,6 @@ angular.module('bahmni.common.offline')
                         }
                     );
                 }
-
 
                 return $q.all(promises);
             };
@@ -316,7 +315,6 @@ angular.module('bahmni.common.offline')
                 if (events.length == index) {
                     return;
                 }
-
                 var event = events[index];
                 if (event.category == "SHREncounter") {
                     var uuid = event.object.match(Bahmni.Common.Constants.uuidRegex)[0];
