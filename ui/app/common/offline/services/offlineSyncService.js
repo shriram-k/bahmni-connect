@@ -140,7 +140,6 @@ angular.module('bahmni.common.offline')
                     return $http.get(Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + fileNames[count]).then(function (response) {
                         updatePendingEventsCount("offline-concepts", response.data.offlineconcepts.length);
                         var lastReadEventUuid = response.data.lastReadEventUuid;
-                        console.log("uuid from offlineConcepts", lastReadEventUuid);
                         return saveMetaData(response.data.offlineconcepts, 0).then(function () {
                             updateSyncedFileNames(fileNames[count], dbName);
                             return getOfflineConceptsDataForFiles(fileNames, ++count, lastReadEventUuid, dbName);
@@ -232,7 +231,6 @@ angular.module('bahmni.common.offline')
 
                     if (isInitSync && _.indexOf(categories, 'offline-concepts') !== -1) {
                         $rootScope.initSyncInfo.message = "Metadata";
-                        console.log("called offline sync");
                         var offlineConceptsPromise = saveMetaDataFromFile().then(function (uuid) {
                             return updateMarker({ uuid: uuid }, "offline-concepts");
                         });
@@ -240,12 +238,10 @@ angular.module('bahmni.common.offline')
                     }
                     if (isInitSync && _.indexOf(categories, 'addressHierarchy') !== -1) {
                         $rootScope.initSyncInfo.message = "Metadata";
-                        console.log("called address sync");
                         var addressHierarchyPromise = saveAddressHierarchyDataFromFile().then(function (uuid) {
                             return updateMarker({ uuid: uuid }, "addressHierarchy");
                         });
                         promises.push(addressHierarchyPromise);
-                        console.log("called address sync-2");
                     }
                 } else {
                     offlineDbService.getPatientsCount().then(
@@ -443,7 +439,6 @@ angular.module('bahmni.common.offline')
                 return offlineDbService.getMarker(category).then(function (marker) {
                     if (event.uuid == undefined) {
                         if (marker.lastReadEventUuid != undefined) {
-                            console.log("Event identifier is null or undefined. Can not override last read event for category - " + category);
                             throw new Error("Event identifier is null or undefined. Can not override last read event for category - " + category);
                         }
                     }

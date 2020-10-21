@@ -486,16 +486,8 @@ describe('OfflineSyncService', function () {
 
         it('should insert log in case of error in response and should stop syncing further', function () {
             var categories = [
-                'offline-concepts'
+                'forms'
             ];
-            var concept1 = concept;
-            var concept2 = concept;
-            var response1 = {lastReadEventUuid: "lastEventUuid1", offlineconcepts: [concept1]};
-            var response2= {lastReadEventUuid: "lastEventUuid2", offlineconcepts: [concept2]};
-
-            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedOfflineConceptsFilesUrl + "offline-concepts").respond(200, ["offline-concepts-1.json.gz", "offline-concepts-2.json.gz"]);
-            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + "offline-concepts-1.json.gz").respond(200, response1);
-            httpBackend.when('GET', Bahmni.Common.Constants.preprocessedOfflineConceptsUrl + "offline-concepts-2.json.gz").respond(200, response2);
 
             spyOn(offlineService, 'getItem').and.callFake(function (key) {
                 if(key == "LoginInformation")
@@ -506,7 +498,6 @@ describe('OfflineSyncService', function () {
                     return localStorage.synced;
                 return categories;
              });
-            //spyOn(offlineDbService, 'getMarker').and.callThrough();
             spyOn(eventLogService, 'getEventsFor').and.callThrough();
             
             spyOn($rootScope, '$broadcast');
@@ -515,13 +506,6 @@ describe('OfflineSyncService', function () {
             });
             spyOn(loggingService, 'logSyncError').and.callThrough();
             spyOn(dbNameService, 'getDbName').and.returnValue(q.when("dbName"));
-
-            httpBackend.expectGET("some url").respond(500, error_log.data);
-            offlineSyncService.sync(true);
-            //httpBackend.flush();
-            $rootScope.$digest();
-
-
             spyOn(offlineDbService, 'getMarker').and.callThrough(function () {
                 return {
                     then: function () {
@@ -529,15 +513,22 @@ describe('OfflineSyncService', function () {
                     }
                 }
             });
+            
+            httpBackend.expectGET("some url").respond(503, error_log.data);
+            offlineSyncService.sync(true);
+            
+            $rootScope.$digest();
+            httpBackend.flush();
+
             expect(offlineDbService.getMarker.calls.count()).toBe(1);
-            expect(eventLogService.getEventsFor).toHaveBeenCalledWith('offline-concepts', {
-                markerName: 'offline-concepts',
+            expect(eventLogService.getEventsFor).toHaveBeenCalledWith('forms', { 
+                markerName: 'forms',
                 filters: [202020]
             });
             expect(eventLogService.getEventsFor.calls.count()).toBe(1);
 
-            expect(loggingService.logSyncError).toHaveBeenCalled();
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("schedulerStage", null, true);
+            expect(loggingService.logSyncError).toHaveBeenCalled();  // not working
+            expect($rootScope.$broadcast).toHaveBeenCalledWith("schedulerStage", null, true); // not working
         });
     });
 
