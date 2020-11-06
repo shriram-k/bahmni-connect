@@ -57,6 +57,11 @@ angular.module('bahmni.home')
                 schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
             };
 
+
+            $scope.import = function () {
+                console.log("Starting to import");
+            };
+
             var cleanUpListenerSchedulerStage = $scope.$on("schedulerStage", function (event, stage, restartSync) {
                 $scope.isSyncing = (stage !== null);
                 if (restartSync) {
