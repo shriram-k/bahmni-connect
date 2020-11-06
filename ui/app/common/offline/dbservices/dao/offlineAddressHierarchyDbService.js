@@ -151,10 +151,22 @@ angular.module('bahmni.common.offline')
                 });
         };
 
+        var getParentAddressByLevelId = function (id) {
+            var addressHierarchyEntryTable = db.getSchema().table('address_hierarchy_entry');
+            return db.select()
+                .from(addressHierarchyEntryTable)
+                .where(addressHierarchyEntryTable.levelId.eq(id))
+                .exec()
+                .then(function (result) {
+                    return result;
+                });
+        };
+
         return {
             init: init,
             insertAddressHierarchy: insertAddressHierarchy,
             search: search,
-            getParentAddressById: getParentAddressById
+            getParentAddressById: getParentAddressById,
+            getParentAddressByLevelId: getParentAddressByLevelId
         };
     }]);

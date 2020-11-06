@@ -1,0 +1,187 @@
+[
+    {
+        "parent" : {
+          "addressHierarchyEntryId": 3,
+          "name": "MANICALAND[01]",
+          "levelId": 3,
+          "addressHierarchyLevel": {
+            "levelId": 3,
+            "name": "Province",
+            "parentLevelId": 2,
+            "addressField": "STATE_PROVINCE",
+            "required": true,
+            "uuid": "d5550dd8-2810-4ac4-8301-20efbf05fd66",
+            "id": 3
+          },
+          "parentId": 2,
+          "userGeneratedId": null,
+          "uuid": "d5550dd8-2810-4ac4-8301-20efbf05fd66"
+        },
+      
+        "child" : {
+          "addressHierarchyEntryId": 4,
+          "name": "MUTASA[06]",
+          "levelId": 4,
+          "addressHierarchyLevel": {
+            "levelId": 4,
+            "name": "District",
+            "parentLevelId": 3,
+            "addressField": "CITY_VILLAGE",
+            "required": true,
+            "uuid": "934c5626-5c7d-4eb4-bc70-b93d04417ec8",
+            "id": 4
+          },
+          "parentId": 3,
+          "userGeneratedId": null,
+          "uuid": "d5550dd8-2810-4ac4-8301-20efbf05fd66"
+        }
+    },
+    {
+        "parent" : {
+            "addressHierachyEntryId": 3,
+            "name": "MANICALAND[01]",
+            "levelId": 3,
+            "addressHierarchyLevel": {
+              "levelId": 3,
+              "name": "Province",
+              "parentLevelId": 2,
+              "addressField": "STATE_PROVINCE",
+              "required": true,
+              "uuid": "d5550dd8-2810-4ac4-8301-20efbf05fd66",
+              "id": 3
+            },
+            "parentId": 2,
+            "userGeneratedId": null,
+            "uuid": "d5550dd8-2810-4ac4-8301-20efbf05fd66"
+          },
+      
+        "child" : {
+          "addressHierarchyEntryId": 4,
+          "name": "MAKONI[04]",
+          "levelId": 4,
+          "addressHierarchyLevel": {
+            "levelId": 4,
+            "name": "District",
+            "parentLevelId": 3,
+            "addressField": "CITY_VILLAGE",
+            "required": true,
+            "uuid": "022ea3e9-f3c8-4c3d-933c-e415ad736364",
+            "id": 4
+          },
+          "parentId": 3,
+          "userGeneratedId": null,
+          "uuid": "d5550dd8-2810-4ac4-8301-20efbf05fd66"
+        }
+    },
+    {
+        "parent" : {
+            "addressHierachyEntryId": 4,
+            "name": "MAKONI[04]",
+            "levelId": 4,
+            "addressHierarchyLevel": {
+              "levelId": 4,
+              "name": "Province",
+              "parentLevelId": 3,
+              "addressField": "STATE_PROVINCE",
+              "required": true,
+              "uuid": "9c5cd5d2-c9ec-428d-8186-4d7a49260859",
+              "id": 4
+            },
+            "parentId": 3,
+            "userGeneratedId": null,
+            "uuid": "9c5cd5d2-c9ec-428d-8186-4d7a49260859"
+          },
+      
+        "child" : {
+          "addressHierarchyEntryId": 5,
+          "name": "ARNOLDINE MISSION CL[92]",
+          "levelId": 5,
+          "addressHierarchyLevel": {
+            "levelId": 5,
+            "name": "Facility",
+            "parentLevelId": 4,
+            "addressField": "ADDRESS_2",
+            "required": true,
+            "uuid": "d48dd71f-2020-40bc-ba40-8c3e985738d3",
+            "id": 5
+          },
+          "parentId": 4,
+          "userGeneratedId": null,
+          "uuid": "022ea3e9-f3c8-4c3d-933c-e415ad736364"
+        }
+    },
+    {
+        "parent" : {
+            "addressHierachyEntryId": 4,
+            "name": "MAKONI[04]",
+            "levelId": 4,
+            "addressHierarchyLevel": {
+              "levelId": 4,
+              "name": "Province",
+              "parentLevelId": 3,
+              "addressField": "STATE_PROVINCE",
+              "required": true,
+              "uuid": "9c5cd5d2-c9ec-428d-8186-4d7a49260859",
+              "id": 4
+            },
+            "parentId": 3,
+            "userGeneratedId": null,
+            "uuid": "9c5cd5d2-c9ec-428d-8186-4d7a49260859"
+          },
+      
+        "child" : {
+          "addressHierarchyEntryId": 5,
+          "name": "BAMBA R.H.C.[01]",
+          "levelId": 5,
+          "addressHierarchyLevel": {
+            "levelId": 5,
+            "name": "Facility",
+            "parentLevelId": 4,
+            "addressField": "ADDRESS_2",
+            "required": true,
+            "uuid": "738ec996-cc6f-412d-ac96-a11b3394279c",
+            "id": 5
+          },
+          "parentId": 4,
+          "userGeneratedId": null,
+          "uuid": "022ea3e9-f3c8-4c3d-933c-e415ad736364"
+        }
+    },
+    {
+        "parent" : {
+            "addressHierachyEntryId": 4,
+            "name": "MAKONI[04]",
+            "levelId": 4,
+            "addressHierarchyLevel": {
+              "levelId": 4,
+              "name": "Province",
+              "parentLevelId": 3,
+              "addressField": "STATE_PROVINCE",
+              "required": true,
+              "uuid": "9c5cd5d2-c9ec-428d-8186-4d7a49260859",
+              "id": 4
+            },
+            "parentId": 3,
+            "userGeneratedId": null,
+            "uuid": "9c5cd5d2-c9ec-428d-8186-4d7a49260859"
+          },
+      
+        "child" : {
+          "addressHierarchyEntryId": 5,
+          "name": "BINGAGURU RHC (CHINYIKA I)[04]",
+          "levelId": 5,
+          "addressHierarchyLevel": {
+            "levelId": 5,
+            "name": "Facility",
+            "parentLevelId": 4,
+            "addressField": "ADDRESS_2",
+            "required": true,
+            "uuid": "cff9b899-e93a-4c40-8851-76607a0aa1a6",
+            "id": 5
+          },
+          "parentId": 4,
+          "userGeneratedId": null,
+          "uuid": "022ea3e9-f3c8-4c3d-933c-e415ad736364"
+        }
+    }
+]
