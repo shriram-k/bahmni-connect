@@ -125,4 +125,43 @@ describe('offlineAddressHierarchyDbService', function () {
         });
 
     });
+
+    it("should return a list of address for a particular level id", function (done) {
+
+        var schemaBuilder = lf.schema.create("BahmniAddressTest", 1);
+        Bahmni.Tests.OfflineDbUtils.createTable(
+          schemaBuilder,
+          Bahmni.Common.Offline.SchemaDefinitions.AddressHierarchyEntry
+        );
+        Bahmni.Tests.OfflineDbUtils.createTable(
+          schemaBuilder,
+          Bahmni.Common.Offline.SchemaDefinitions.AddressHierarchyLevel
+        );
+        jasmine.getFixtures().fixturesPath = "base/test/data";
+        var addressHierarchyJSON = JSON.parse(
+          readFixtures("addressHierarchyEntries.json")
+        );
+        schemaBuilder.connect().then(function (db) {
+          offlineAddressHierarchyDbService.init(db);
+          (offlineAddressHierarchyDbService.insertAddressHierarchy(
+            addressHierarchyJSON[0].parent
+          ),
+          offlineAddressHierarchyDbService.insertAddressHierarchy(
+            addressHierarchyJSON[1].parent
+          ),
+          offlineAddressHierarchyDbService.insertAddressHierarchy(
+            addressHierarchyJSON[2].parent
+          ),
+          offlineAddressHierarchyDbService.insertAddressHierarchy(
+            addressHierarchyJSON[3].parent
+          )).then(function () {
+            offlineAddressHierarchyDbService
+                .getParentAddressByLevelId(3)
+                .then(function (result) {
+                expect(result.length).toBe(3);
+                done();
+                });
+          });
+        });
+      });
 });
