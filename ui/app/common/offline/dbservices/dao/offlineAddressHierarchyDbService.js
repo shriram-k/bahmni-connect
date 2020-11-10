@@ -162,11 +162,22 @@ angular.module('bahmni.common.offline')
                 });
         };
 
+        var getAddressesHeirarchyLevels = function () {
+            var addressHierarchyLevelTable = db.getSchema().table('address_hierarchy_level');
+            return db.select(addressHierarchyLevelTable.addressHierarchyLevelId)
+                .from(addressHierarchyLevelTable)
+                .exec()
+                .then(function (result) {
+                    return result;
+                });
+        };
+
         return {
             init: init,
             insertAddressHierarchy: insertAddressHierarchy,
             search: search,
             getParentAddressById: getParentAddressById,
-            getParentAddressByLevelId: getParentAddressByLevelId
+            getParentAddressByLevelId: getParentAddressByLevelId,
+            getAddressesHeirarchyLevels: getAddressesHeirarchyLevels
         };
     }]);

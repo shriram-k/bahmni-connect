@@ -1,15 +1,7 @@
-<div class="opd-header-wrapper">
+<div class="opd-header-wrapper" ng-controller="SyncDataRulesController">
   <div class="opd-header-top">
-    <a
-      class="back-btn"
-      ng-class="{'dashboard-link':backLink.image}"
-      accesskey="h"
-      ng-href="../home/index.html"
-      ng-click="closeAllDialogs()"
-      id=""
-      title=""
-      href="../home/index.html"
-    >
+    <a class="back-btn" ng-class="{'dashboard-link':backLink.image}" accesskey="h" ng-href="../home/index.html"
+      ng-click="closeAllDialogs()" id="" title="" href="../home/index.html">
       <i class="fa fa-home"></i>
     </a>
   </div>
@@ -17,34 +9,29 @@
 <section class="block sync-rules-section">
   <h2 class="section-title">Sync Data Rules</h2>
   <div class="sync-data-rules-container">
-    <form action="#">
+    <form>
       <div>
         <input type="radio" id="full-sync" name="sync-stratergy" value="full-sync" checked>
         <label for="full-sync">Full Sync</label>
       </div>
-      
+
       <div>
         <input type="radio" id="selective-sync" name="sync-stratergy" value="selective-sync">
         <label for="selective-sync">Selective Sync</label>
       </div>
-  
+
       <div class="province-select">
         <select name="province" id="province-select">
           <option value="">--Select Province--</option>
-          <option value="dog">Dog</option>
-          <option value="cat">Cat</option>
-          <option value="hamster">Hamster</option>
-          <option value="parrot">Parrot</option>
-          <option value="spider">Spider</option>
-          <option value="goldfish">Goldfish</option>
-      </select>
+          <option ng-repeat="address in addressList" value={{address.name}}>{{address.name}}</option>
+        </select>
 
       </div>
-    </br>
+      </br>
       <div>
         <input type="submit" value="Start Sync" />
       </div>
-      
+
     </form>
   </div>
 </section>
