@@ -18,15 +18,21 @@
       <div>
         <input type="radio" id="selective-sync" name="sync-stratergy" value="selective-sync">
         <label for="selective-sync">Selective Sync</label>
-      </div>
-
+  
       <div class="province-select">
         <select name="province" id="province-select">
           <option value="">--Select Province--</option>
-          <option ng-repeat="address in addressList" value={{address.name}}>{{address.name}}</option>
+          <option ng-repeat="address in provinceAddressList" value={{address.name}}>{{address.name}}</option>
         </select>
-
       </div>
+
+      <div class="district-select">
+        <select name="district" id="district-select">
+          <option value="">--Select District--</option>
+          <option ng-repeat="address in districtAddressList" value={{address.name}}>{{address.name}}</option>
+        </select>
+      </div>
+    </div>
       </br>
       <div>
         <input type="submit" value="Start Sync" />
