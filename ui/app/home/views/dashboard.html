@@ -60,8 +60,10 @@
                 <a id="{{extn.id}}" ng-href="{{extn.url}}" class="button app big" target="{{extn.target?extn.target:'_self'}}" ng-if="isVisibleExtension(extn)">
                     <i class="{{extn.icon}}"></i>{{extn | titleTranslate}}</a>
             </li>
-            <a id="bahmni.syncrules" ng-href="../syncdatarules/index.html" class="button app big" target="_self">
-                <i class=""></i>Sync</a>
+            <li class="ng-scope">
+                <a id="bahmni.syncrules" ng-href="../syncdatarules/index.html" class="button app big" target="_self">
+                <i class="fa fa-refresh"></i>Sync</a>
+            </li>
         </ul>
     </div>
     <div ng-if="::isOfflineApp" class="syncStatusInfo">

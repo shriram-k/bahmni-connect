@@ -1,39 +1,71 @@
-<div class="dashboard">
-  <header class="reg-header">
-      <div class="reg-header-right fr">
-          Syncing Rules
-      </div>
-  </header>
-  <section class="reg-search-wrapper">
-    <section class="reg-search">
-      <form name="syncRules" class="simple-form-ui clearfix">
-        <label for="syncRules">Sync Rules</label>
-        <div class="search-patient-id fl">
-          <input tabindex="2" class="fl" type="text" id="patientId" ng-model="syncRules.patientId" focus-me="true" placeholder="PatientId">
-          <input tabindex="3" class="fl" type="text" id="provinceName" ng-model="syncRules.provinceName" focus-me="true" placeholder="provinceName">
-          <input tabindex="4" class="fl" type="text" id="districtName" ng-model="syncRules.districtName" focus-me="true" placeholder="districtName">
-        </div>
-        <div class="reg-search">
-          <input tabindex="5" class="fl" type="checkbox" id="pullEncounters" ng-model="syncRules.pullEncounters">
-          <label for="pullEncounters" class="fl">Pull Encounters</label>
-            <input type="file" id="myFile" />
-            <button type="button" ng-click="readFromFile()">Save from:</button>
-        </div>
-        <div class="reg-search">
-          <button tabindex="6" class="fl" type="submit" ng-click="estimate()">Estimate</button>
-          <button tabindex="7" class="fl" type="submit" ng-click="import()">Start Import</button>
-          <button tabindex="8" class="fl" type="submit" ng-click="exportMetaData()">Export MetaData</button>
-          <button tabindex="9" class="fl" type="submit" ng-click="clearMetaData()">CLear Metadata</button>
-        </div>
-        <span ng-hide="noEvents">{{events}} events to be synced</span>
-        <div class="note-container no-search-results" ng-show="noEvents">
-          <div class="note warning">
-            <div class="text">
-              <p>{{noResultsMessage | translate:patientIdentifier }}</p>
-            </div>
-          </div>
-        </div>
-      </form>
-    </section>
-  </section>
+<div class="opd-header-wrapper">
+  <div class="opd-header-top">
+    <a
+      class="back-btn"
+      ng-class="{'dashboard-link':backLink.image}"
+      accesskey="h"
+      ng-href="../home/index.html"
+      ng-click="closeAllDialogs()"
+      id=""
+      title=""
+      href="../home/index.html"
+    >
+      <i class="fa fa-home"></i>
+    </a>
+  </div>
 </div>
+<section class="block sync-rules-section">
+  <h2 class="section-title">Sync Data Rules</h2>
+  <div class="sync-data-rules-container">
+    <form action="#">
+      <div>
+        <input type="radio" id="full-sync" name="sync-stratergy" value="full-sync" checked>
+        <label for="full-sync">Full Sync</label>
+      </div>
+      
+      <div>
+        <input type="radio" id="selective-sync" name="sync-stratergy" value="selective-sync">
+        <label for="selective-sync">Selective Sync</label>
+      </div>
+  
+      <div class="province-select">
+        <select name="province" id="province-select">
+          <option value="">--Select Province--</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+          <option value="hamster">Hamster</option>
+          <option value="parrot">Parrot</option>
+          <option value="spider">Spider</option>
+          <option value="goldfish">Goldfish</option>
+      </select>
+
+      </div>
+    </br>
+      <div>
+        <input type="submit" value="Start Sync" />
+      </div>
+      
+    </form>
+  </div>
+</section>
+
+<style>
+  .sync-rules-section {
+    min-width: 50%;
+    position: absolute;
+    padding: 2%;
+    margin-top: 5%;
+  }
+
+  .sync-data-rules-container {
+    border: 1px solid #ccc;
+    background: #ffffff;
+    border-radius: 3px;
+    overflow: hidden;
+    padding: 10px;
+  }
+
+  .back-btn {
+    margin-left: 25px !important;
+  }
+</style>
