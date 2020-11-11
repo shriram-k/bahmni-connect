@@ -124,7 +124,7 @@ angular.module('bahmni.common.offline')
                 });
             };
 
-            var sync = function (isInitSync,category) {
+            var sync = function (isInitSync) {
                 stages = 0;
                 if (offlineService.isAndroidApp()) {
                     offlineDbService = androidDbService;
@@ -132,11 +132,10 @@ angular.module('bahmni.common.offline')
                 if (_.includes(offlineService.getItem("eventLogCategories"), "transactionalData")) {
                     return migrate(isInitSync);
                 }
-                return syncData(isInitSync,category);
+                return syncData(isInitSync);
             };
 
-            var syncData = function (isInitSync,category) {
-                console.log("hahaha  got it ",category);
+            var syncData = function (isInitSync) {
                 var promises = [];
                 categories = offlineService.getItem("eventLogCategories");
                 initializeInitSyncInfo(categories);
@@ -144,10 +143,6 @@ angular.module('bahmni.common.offline')
                     if (!isInitSync || category !== "patient") {
                         promises.push(syncForCategory(category, isInitSync));
                     }
-
-                    // promises.push(syncForCategory("addressHierarchy", isInitSync));
-                    // promises.push(syncForCategory("parentAddressHierarchy", isInitSync));
-
                 });
                 if (isInitSync && _.indexOf(categories, 'patient') !== -1) {
                     var patientPromise = savePatientDataFromFile().then(function (uuid) {
@@ -350,8 +345,7 @@ angular.module('bahmni.common.offline')
             };
 
             return {
-                sync: sync,
-                savePatientDataFromFile:savePatientDataFromFile
+                sync: sync
             };
         }
     ]);
