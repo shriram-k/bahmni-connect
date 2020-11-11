@@ -23,16 +23,22 @@
       
       <div ng-show="isSelectVisible"  class="mb20">
         <div class="province-select select">
-          <select name="province" id="province-select" ng-model="filters.province">
-            <option value="">--Select Province--</option>
-            <option ng-repeat="address in provinceAddressList" value={{address.name}}>{{address.name}}</option>
+          <select name="province" id="province-select" ng-model="filters.provinceId" ng-change="filterDistrict()">
+            <option ng-repeat="address in provinceAddressList" value={{address.id}}>{{address.name}}</option>
           </select>
         </div>
 
         <div class="district-select select">
-          <select name="district" id="district-select" ng-model="filters.district">
+          <select name="district" id="district-select" ng-model="filters.districtId" ng-change="filterFacility()">
             <option value="">--Select District--</option>
-            <option ng-repeat="address in districtAddressList" value={{address.name}}>{{address.name}}</option>
+            <option ng-repeat="address in filteredDistrictList" value={{address.id}}>{{address.name}}</option>
+          </select>
+        </div>
+
+        <div class="facility-select select">
+          <select name="facility" id="facility-select" ng-model="filters.facilityId">
+            <option value="">--Select Facility--</option>
+            <option ng-repeat="address in filteredFacilityList" value={{address.id}}>{{address.name}}</option>
           </select>
         </div>
       </div>
