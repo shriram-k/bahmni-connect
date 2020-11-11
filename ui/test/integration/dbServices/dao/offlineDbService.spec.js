@@ -17,7 +17,7 @@ describe('OfflineDbService ', function () {
             patientAttributeDbService = jasmine.createSpyObj('patientAttributeDbService', ['insertAttributes', 'getAttributeTypes']);
             labOrderResultsDbService = jasmine.createSpyObj('labOrderResultsDbService', ['insertLabOrderResults', 'getLabOrderResultsForPatient']);
             offlineMarkerDbService = jasmine.createSpyObj('offlineMarkerDbService', ['init', 'getMarker', 'insertMarker']);
-            offlineAddressHierarchyDbService = jasmine.createSpyObj('offlineAddressHierarchyDbService', ['init', 'insertAddressHierarchy', 'search']);
+            offlineAddressHierarchyDbService = jasmine.createSpyObj('offlineAddressHierarchyDbService', ['init', 'insertAddressHierarchy', 'search', 'getParentAddressByLevelId', 'getAddressesHeirarchyLevels']);
             offlineConfigDbService = jasmine.createSpyObj('offlineConfigDbService', ['init', 'getConfig', 'insertConfig']);
             initializeOfflineSchema = jasmine.createSpyObj('initializeOfflineSchema', ['initSchema', 'reinitSchema']);
             referenceDataDbService = jasmine.createSpyObj('referenceDataDbService', ['init', 'getReferenceData', 'insertReferenceData']);
@@ -936,6 +936,19 @@ describe('OfflineDbService ', function () {
             expect(offlineAddressHierarchyDbService.search.calls.count()).toBe(1);
             expect(offlineAddressHierarchyDbService.search).toHaveBeenCalledWith("paramas");
         });
+
+        it("should call getParentAddressByLevelId with given level id", function () {
+            offlineDbService.getAllAddressesByLevelId(3);
+            expect(offlineAddressHierarchyDbService.getParentAddressByLevelId.calls.count()).toBe(1);
+            expect(offlineAddressHierarchyDbService.getParentAddressByLevelId).toHaveBeenCalledWith(3);
+        })
+
+        it("should call getAddressesHeirarchyLevels with no params", function () {
+            offlineDbService.getAddressesHeirarchyLevels();
+            expect(offlineAddressHierarchyDbService.getAddressesHeirarchyLevels.calls.count()).toBe(1);
+            expect(offlineAddressHierarchyDbService.getAddressesHeirarchyLevels).toHaveBeenCalledWith();
+        })
+
     });
 
 

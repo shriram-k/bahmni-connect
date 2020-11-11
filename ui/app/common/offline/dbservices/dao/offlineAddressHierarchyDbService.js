@@ -175,6 +175,7 @@ angular.module('bahmni.common.offline')
         return {
             init: init,
             insertAddressHierarchy: insertAddressHierarchy,
+            insertAddressHierarchyLevel: insertAddressHierarchyLevel,
             search: search,
             getParentAddressById: getParentAddressById,
             getParentAddressByLevelId: getParentAddressByLevelId,
