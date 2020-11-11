@@ -6,36 +6,41 @@
     </a>
   </div>
 </div>
+
 <section class="block sync-rules-section">
   <h2 class="section-title">Sync Data Rules</h2>
   <div class="sync-data-rules-container">
     <form>
-      <div>
-        <input type="radio" id="full-sync" name="sync-stratergy" value="full-sync" checked>
+      <div class="mb20">
+        <input type="radio" id="full-sync" name="sync-stratergy" ng-model="filters.sync_stratergy" value="full" ng-click="showSelect('N')" checked>
         <label for="full-sync">Full Sync</label>
       </div>
 
-      <div>
-        <input type="radio" id="selective-sync" name="sync-stratergy" value="selective-sync">
+      <div class="mb20">
+        <input type="radio" id="selective-sync" name="sync-stratergy" ng-model="filters.sync_stratergy" value="selective" ng-click="showSelect('Y')">
         <label for="selective-sync">Selective Sync</label>
-  
-      <div class="province-select">
-        <select name="province" id="province-select">
-          <option value="">--Select Province--</option>
-          <option ng-repeat="address in provinceAddressList" value={{address.name}}>{{address.name}}</option>
-        </select>
       </div>
+      
+      <div ng-show="isSelectVisible"  class="mb20">
+        <div class="province-select select">
+          <select name="province" id="province-select" ng-model="filters.province">
+            <option value="">--Select Province--</option>
+            <option ng-repeat="address in provinceAddressList" value={{address.name}}>{{address.name}}</option>
+          </select>
+        </div>
 
-      <div class="district-select">
-        <select name="district" id="district-select">
-          <option value="">--Select District--</option>
-          <option ng-repeat="address in districtAddressList" value={{address.name}}>{{address.name}}</option>
-        </select>
+        <div class="district-select select">
+          <select name="district" id="district-select" ng-model="filters.district">
+            <option value="">--Select District--</option>
+            <option ng-repeat="address in districtAddressList" value={{address.name}}>{{address.name}}</option>
+          </select>
+        </div>
       </div>
-    </div>
+      <p class="validation-error" ng-show="showValidationError">{{validationError}}</p>
+    
       </br>
       <div>
-        <input type="submit" value="Start Sync" />
+        <input type="submit" ng-click="sync(filters)" value="Start Sync" />
       </div>
 
     </form>
@@ -60,5 +65,18 @@
 
   .back-btn {
     margin-left: 25px !important;
+  }
+
+  .select {
+    display: inline-block;
+  }
+
+  .validation-error {
+    color: red;
+    padding: 10px;
+  }
+
+  .mb20{
+    margin-bottom: 20px;
   }
 </style>
