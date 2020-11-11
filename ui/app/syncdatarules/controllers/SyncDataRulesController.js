@@ -2,8 +2,10 @@
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
   "$scope",
+  "$http",
   "offlineDbService",
-  function ($scope, offlineDbService) {
+  "spinner",
+  function ($scope, $http, offlineDbService, spinner) {
     var LEVEL_PROVINCE;
     var LEVEL_DISTRICT;
     var LEVEL_FACILITY;
@@ -11,12 +13,16 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     var districtAddressList = [];
     var facilityAddressList = [];
 
+    $scope.filters = {
+      sync_stratergy: "full"
+    };
+
     $scope.provinceAddressList = [];
     $scope.filteredDistrictList = [];
     $scope.filteredFacilityList = [];
 
     $scope.isSelectVisible = false;
-    $scope.validationError = "** Please Select Province & District";
+    $scope.validationError = "** Please Select Province";
 
     $scope.showValidationError = false;
 
@@ -47,28 +53,23 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     $scope.sync = function(filters){
       console.log('Filters' ,filters);
-      if(filters.sync_stratergy == "selective" && ["", undefined].includes(filters.province) && ["", undefined].includes(filters.district)){
+      if(filters.sync_stratergy == "selective" && ["", undefined].includes(filters.provinceId)){
         $scope.showValidationError = true;
       }else{
         $scope.showValidationError = false;
         // below code is for makng backend post call
-        // $http({
-        //   url: 'request-url',
-        //   method: "POST",
-        //   data: filters
-        // })
-        // .then(function(response) {
-        //         // success
-        // }, 
-        // function(response) { // optional
-        //         // failed
-        // });
+        // var url = 
+        /* return $http.post(url, filters, {
+                withCredentials: true,
+                headers: {"Accept": "application/json", "Content-Type": "application/json"}
+           });
+        */
       }
 
 
     }
 
-    $scope.populateList = function () {
+    var populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
         var levelIds = levels.map((id) => id.addressHierarchyLevelId);
         LEVEL_PROVINCE = levelIds[0];
@@ -87,8 +88,9 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           });
         });
       });
+
 		};
 		
-    $scope.populateList();
+    populateList();
   },
 ]);

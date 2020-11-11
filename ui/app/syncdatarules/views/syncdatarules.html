@@ -12,7 +12,7 @@
   <div class="sync-data-rules-container">
     <form>
       <div class="mb20">
-        <input type="radio" id="full-sync" name="sync-stratergy" ng-model="filters.sync_stratergy" value="full" ng-click="showSelect('N')" checked>
+        <input type="radio" id="full-sync" name="sync-stratergy" ng-model="filters.sync_stratergy" value="full" ng-click="showSelect('N')">
         <label for="full-sync">Full Sync</label>
       </div>
 
@@ -24,6 +24,7 @@
       <div ng-show="isSelectVisible"  class="mb20">
         <div class="province-select select">
           <select name="province" id="province-select" ng-model="filters.provinceId" ng-change="filterDistrict()">
+            <option value="">--Select Province--</option>
             <option ng-repeat="address in provinceAddressList" value={{address.id}}>{{address.name}}</option>
           </select>
         </div>
