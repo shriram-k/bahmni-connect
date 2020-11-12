@@ -12,7 +12,7 @@
   <div class="sync-data-rules-container">
     <form>
       <div class="mb20">
-        <input type="radio" id="full-sync" name="sync-stratergy" ng-model="filters.sync_stratergy" value="full" ng-click="showSelect('N')">
+        <input type="radio" id="full-sync" name="sync-stratergy" ng-model="filters.sync_stratergy" value="full" ng-click="showSelect('N')" ng-change="resetAllFilters()">
         <label for="full-sync">Full Sync</label>
       </div>
 

@@ -39,7 +39,25 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     };
 
     $scope.filterDistrict = function() {
+      resetSecondaryFilters();
       $scope.filteredDistrictList = districtAddressList.filter(dist => dist.parentId == $scope.filters.provinceId);
+    };
+
+    var resetSecondaryFilters = function () {
+      $scope.filters.districtId = "";
+      $scope.filters.facilityId = "";
+
+      $scope.filteredDistrictList = [];
+      $scope.filteredFacilityList = [];
+    };
+
+    $scope.resetAllFilters = function () {
+      $scope.filters.provinceId = "";
+      $scope.filters.districtId = "";
+      $scope.filters.facilityId = "";
+
+      $scope.filteredDistrictList = [];
+      $scope.filteredFacilityList = [];
     };
 
     $scope.filterFacility = function() {
@@ -88,7 +106,6 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           });
         });
       });
-
 		};
 		
     populateList();
