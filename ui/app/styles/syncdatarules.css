@@ -37,8 +37,6 @@
   cursor: pointer;
   border: solid 1px #ddd;
   padding:10px;
-  background-color: #333;
-  color: #ffffff;
 }
 .selected-items-box .items-list {
   list-style-type: none;
@@ -48,6 +46,11 @@
 }
 .selected-items-box .items-list li {
   display: inline;
+}
+
+li:hover {
+  background-color: #5897fb !important;
+  color: white;
 }
 
 .wrapper .list {
@@ -60,7 +63,7 @@
   border-bottom: solid 1px #C7C6C7;
   z-index: 100;
   position: absolute;
-  width: 100%;
+  width: auto;
 }
 .list .items-list {
   list-style-type: none;
@@ -73,6 +76,6 @@
   width: 100%;
   padding: 0;
   border-bottom: solid 1px #C7C6C7;
-  padding: 5px;
+  padding: 15px;
   background-color: #fff;
 }
