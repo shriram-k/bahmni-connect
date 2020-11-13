@@ -2,10 +2,8 @@
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
   "$scope",
-  "$http",
   "offlineDbService",
-  "spinner",
-  function ($scope, $http, offlineDbService, spinner) {
+  function ($scope, offlineDbService) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
       console.log("sliding " + e.target.id);
@@ -54,10 +52,15 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       facilityAddressList.push(address);
     };
 
-    $scope.filterDistrict = function() {
+    $scope.filterDistrict = function () {
       resetSecondaryFilters();
       var selectedProvincesParentIds =  $scope.provinceAddressList.filter(province => province.selected).map(province => province.id);
       $scope.filteredDistrictList = districtAddressList.filter(dist => selectedProvincesParentIds.includes(dist.parentId));
+    };
+
+    $scope.filterFacility = function() {
+      var selectedDistrictParentIds =  districtAddressList.filter(district => district.selected).map(district => district.id);
+      $scope.filteredFacilityList = facilityAddressList.filter(fac => selectedDistrictParentIds.includes(fac.parentId));
     };
 
     var resetSecondaryFilters = function () {
@@ -75,10 +78,6 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
       $scope.filteredDistrictList = [];
       $scope.filteredFacilityList = [];
-    };
-
-    $scope.filterFacility = function() {
-      $scope.filteredFacilityList = facilityAddressList.filter(fac => fac.parentId == $scope.filters.districtId);
     };
 
 		$scope.showSelect = function(val){
