@@ -29,3 +29,50 @@
 .mb20{
   margin-bottom: 20px;
 }
+
+.wrapper {
+  width: 200px;
+}
+.wrapper .selected-items-box {
+  cursor: pointer;
+  border: solid 1px #ddd;
+  padding:10px;
+  background-color: #333;
+  color: #ffffff;
+}
+.selected-items-box .items-list {
+  list-style-type: none;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.selected-items-box .items-list li {
+  display: inline;
+}
+
+.wrapper .list {
+  display: none;
+  height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-left: solid 1px #C7C6C7;
+  border-right: solid 1px #C7C6C7;
+  border-bottom: solid 1px #C7C6C7;
+  z-index: 100;
+  position: absolute;
+  width: 100%;
+}
+.list .items-list {
+  list-style-type: none;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.list .items-list li {
+  margin: 0;
+  width: 100%;
+  padding: 0;
+  border-bottom: solid 1px #C7C6C7;
+  padding: 5px;
+  background-color: #fff;
+}

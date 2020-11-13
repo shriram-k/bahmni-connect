@@ -6,6 +6,22 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
   "offlineDbService",
   "spinner",
   function ($scope, $http, offlineDbService, spinner) {
+
+    $('.selected-items-box').unbind('click').bind('click', function(e) {
+      console.log("sliding " + e.target.id);
+
+      if(e.target.id == "province-select") {
+        $('.wrapper .province-list').slideToggle('fast');
+      }
+      else if(e.target.id == "district-select") {
+        $('.wrapper .district-list').slideToggle('fast');
+      }
+      else if(e.target.id == "facility-select") {
+        $('.wrapper .facility-list').slideToggle('fast');
+      }
+
+    });
+
     var LEVEL_PROVINCE;
     var LEVEL_DISTRICT;
     var LEVEL_FACILITY;
@@ -40,7 +56,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     $scope.filterDistrict = function() {
       resetSecondaryFilters();
-      $scope.filteredDistrictList = districtAddressList.filter(dist => dist.parentId == $scope.filters.provinceId);
+      var selectedProvincesParentIds =  $scope.provinceAddressList.filter(province => province.selected).map(province => province.id);
+      $scope.filteredDistrictList = districtAddressList.filter(dist => selectedProvincesParentIds.includes(dist.parentId));
     };
 
     var resetSecondaryFilters = function () {
@@ -83,9 +100,11 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
            });
         */
       }
+    };
 
-
-    }
+    $scope.getAllCheckedProvince = function() {
+      console.log('provinceAddressList', provinceAddressList)
+    };
 
     var populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
@@ -107,7 +126,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         });
       });
 		};
-		
+
     populateList();
   },
 ]);

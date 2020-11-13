@@ -23,26 +23,50 @@
       </div>
       
       <div ng-show="isSelectVisible"  class="mb20">
-        <div class="province-select select">
-          <select name="province" id="province-select" ng-model="filters.provinceId" ng-change="filterDistrict()">
-            <option value="">--Select Province--</option>
-            <option ng-repeat="address in provinceAddressList" value={{address.id}}>{{address.name}}</option>
-          </select>
+
+        <div class="wrapper">
+          <div class="selected-items-box" id="province-select">--- Select Province ---<span class="dropdown-icon"></span>
+          </div>
+          <div class="province-list list">
+            <ul class="items-list">
+              <li ng-repeat="address in provinceAddressList">
+                <input type="checkbox" ng-model="address.selected" ng-change="filterDistrict()"/>
+                <span>{{address.name}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div class="district-select select">
-          <select name="district" id="district-select" ng-model="filters.districtId" ng-change="filterFacility()">
-            <option value="">--Select District--</option>
-            <option ng-repeat="address in filteredDistrictList" value={{address.id}}>{{address.name}}</option>
-          </select>
+        <div class="wrapper">
+          <div class="selected-items-box" id="district-select">
+          --- Select facility ---
+                    <span class="dropdown-icon"></span>
+          </div>
+          <div class="district-list list">
+            <ul class="items-list">
+              <li ng-repeat="address in filteredDistrictList">
+                <input type="checkbox" ng-model="filters.selected" />
+                <span>{{address.name}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div class="facility-select select">
-          <select name="facility" id="facility-select" ng-model="filters.facilityId">
-            <option value="">--Select Facility--</option>
-            <option ng-repeat="address in filteredFacilityList" value={{address.id}}>{{address.name}}</option>
-          </select>
+        <div class="wrapper">
+          <div class="selected-items-box" id="facility-select">
+          --- Select district ---
+                    <span class="dropdown-icon"></span>
+          </div>
+          <div class="facility-list list">
+            <ul class="items-list">
+              <li ng-repeat="address in filteredFacilityList">
+                <input type="checkbox" ng-model="filters.facilityId" />
+                <span>{{address.name}}</span>
+              </li>
+            </ul>
+          </div>
         </div>
+
       </div>
       <p class="validation-error" ng-show="showValidationError">{{validationError}}</p>
     
@@ -50,7 +74,8 @@
       <div>
         <input type="submit" ng-click="sync(filters)" value="Start Sync" />
       </div>
-
     </form>
   </div>
+
+  
 </section>
