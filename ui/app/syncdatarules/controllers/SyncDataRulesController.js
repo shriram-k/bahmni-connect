@@ -6,18 +6,31 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
   function ($scope, offlineDbService) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
-      console.log("sliding " + e.target.id);
+      console.log("current target", e.currentTarget.id)
 
-      if(e.target.id == "province-select") {
-        $('.wrapper .province-list').slideToggle('fast');
+      if(e.currentTarget.id == "province-select") {
+        $('.province-list').slideToggle('fast');
       }
-      else if(e.target.id == "district-select") {
-        $('.wrapper .district-list').slideToggle('fast');
+      else if(e.currentTarget.id == "district-select") {
+        $('.district-list').slideToggle('fast');
       }
-      else if(e.target.id == "facility-select") {
-        $('.wrapper .facility-list').slideToggle('fast');
+      else if(e.currentTarget.id == "facility-select") {
+        $('.facility-list').slideToggle('fast');
       }
 
+    });
+
+    $(document).mouseup(function(e) 
+    {
+      var container = new Array();
+      container.push($('.list'));
+      $.each(container, function(key, value) {
+        if (!$(value).is(e.target) // if the target of the click isn't the container...
+            && $(value).has(e.target).length === 0) // ... nor a descendant of the container
+        {
+            $(value).hide();
+        }
+      });
     });
 
     var LEVEL_PROVINCE;
@@ -27,21 +40,18 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     var districtAddressList = [];
     var facilityAddressList = [];
 
-    $scope.filters = {
-      sync_stratergy: "full"
+    $scope.state = {
+      sync_stratergy: "full",
+      provinceAddressList: [],
+      filteredDistrictList: [],
+      filteredFacilityList: [],
+      isSelectVisible: false,
+      validationError: "** Please Select Province", 
+      showValidationError: false 
     };
 
-    $scope.provinceAddressList = [];
-    $scope.filteredDistrictList = [];
-    $scope.filteredFacilityList = [];
-
-    $scope.isSelectVisible = false;
-    $scope.validationError = "** Please Select Province";
-
-    $scope.showValidationError = false;
-
     var addProviceAddress = function (address) {
-      $scope.provinceAddressList.push(address);
+      $scope.state.provinceAddressList.push(address);
     };
 
     var addDistrictAddress = function (address) {
@@ -54,55 +64,55 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     $scope.filterDistrict = function () {
       resetSecondaryFilters();
-      var selectedProvincesParentIds =  $scope.provinceAddressList.filter(province => province.selected).map(province => province.id);
-      $scope.filteredDistrictList = districtAddressList.filter(dist => selectedProvincesParentIds.includes(dist.parentId));
+      var selectedProvincesParentIds =  $scope.state.provinceAddressList.filter(province => province.selected).map(province => province.id);
+      $scope.state.filteredDistrictList = districtAddressList.filter(dist => selectedProvincesParentIds.includes(dist.parentId));
     };
 
     $scope.filterFacility = function() {
       var selectedDistrictParentIds =  districtAddressList.filter(district => district.selected).map(district => district.id);
-      $scope.filteredFacilityList = facilityAddressList.filter(fac => selectedDistrictParentIds.includes(fac.parentId));
+      $scope.state.filteredFacilityList = facilityAddressList.filter(fac => selectedDistrictParentIds.includes(fac.parentId));
+    };
+
+    $scope.selectedProvinceNames = function() {
+      return $scope.state.provinceAddressList.filter(
+        province => province.selected
+      ).map(prov => prov.name)
+    };
+
+    $scope.selectedDistrictNames = function() {
+      return $scope.state.filteredDistrictList.filter(
+        dist => dist.selected
+      ).map(prov => prov.name)
+    };
+
+    $scope.selectedFacilityNames = function() {
+      return $scope.state.filteredFacilityList.filter(
+        fac => fac.selected
+      ).map(fac => fac.name)
     };
 
     var resetSecondaryFilters = function () {
-      $scope.filters.districtId = "";
-      $scope.filters.facilityId = "";
-
-      $scope.filteredDistrictList = [];
-      $scope.filteredFacilityList = [];
+      $scope.state.filteredDistrictList = [];
+      $scope.state.filteredFacilityList = [];
     };
 
     $scope.resetAllFilters = function () {
-      $scope.filters.provinceId = "";
-      $scope.filters.districtId = "";
-      $scope.filters.facilityId = "";
-
-      $scope.filteredDistrictList = [];
-      $scope.filteredFacilityList = [];
+      $scope.state.filteredDistrictList = [];
+      $scope.state.filteredFacilityList = [];
+      $scope.state.provinceAddressList.map(province => province.selected = false)
     };
 
 		$scope.showSelect = function(val){
-      $scope.isSelectVisible = val == 'Y';
-      if( val == 'N') $scope.showValidationError = false;
+      $scope.state.isSelectVisible = val == 'Y';
+      if( val == 'N') $scope.state.showValidationError = false;
     };
 
-    $scope.sync = function(filters){
-      console.log('Filters' ,filters);
-      if(filters.sync_stratergy == "selective" && ["", undefined].includes(filters.provinceId)){
-        $scope.showValidationError = true;
-      }else{
-        $scope.showValidationError = false;
-        // below code is for makng backend post call
-        // var url = 
-        /* return $http.post(url, filters, {
-                withCredentials: true,
-                headers: {"Accept": "application/json", "Content-Type": "application/json"}
-           });
-        */
-      }
-    };
-
-    $scope.getAllCheckedProvince = function() {
-      console.log('provinceAddressList', provinceAddressList)
+    $scope.sync = function(){
+      
+      if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames === 0){
+        $scope.state.showValidationError = true;
+      };
+      console.log('Filters' ,$scope.state);
     };
 
     var populateList = function () {
