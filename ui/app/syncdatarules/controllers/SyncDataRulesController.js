@@ -6,7 +6,6 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
   function ($scope, offlineDbService) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
-      console.log("current target", e.currentTarget.id)
 
       if(e.currentTarget.id == "province-select") {
         $('.province-list').slideToggle('fast');
@@ -46,8 +45,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       filteredDistrictList: [],
       filteredFacilityList: [],
       isSelectVisible: false,
-      validationError: "** Please Select Province", 
-      showValidationError: false 
+      validationError: "** Please Select Province **", 
+      showValidationError: false
     };
 
     var addProviceAddress = function (address) {
@@ -112,7 +111,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames().length === 0){
         $scope.state.showValidationError = true;
       }else{
-        console.log('Filters' ,$scope.state);
+        var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
+        console.log('Filters' , config);
         $scope.state.showValidationError = false;
       }
     };
