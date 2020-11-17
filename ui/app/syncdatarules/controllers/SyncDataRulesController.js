@@ -119,24 +119,22 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         if($scope.state.sync_stratergy === "selective"){
           let categories = offlineService.getItem("eventLogCategories");
         _.forEach(categories, function (category) {
-          console.log("category name is ->", category);
           if(category === "patient" || category === "encounter"){
-          let marker = offlineDbService.getMarker(category);
-          let tempMarkers = [];
-            _.forEach(marker, function(markerEntry){
-              let filter = markerEntry;
-              console.log("Marker Filters are ->",filter.filters);
-              filter.filters = filter.filters + "-" + filters;
-              tempMarkers.push(filter);
-            });
-            marker = tempMarkers;
-            console.log("markers ->",marker);
-            offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, marker.filters);
+           offlineDbService.getMarker(category).then(function(marker){
+            let tempMarkers = [];
+              _.forEach(marker.filters, function(markerEntry){
+                let filter = markerEntry;
+                filter = filter + "-" + filters;
+                tempMarkers.push(filter);
+              });
+              offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
+          });
         }
       });
+       // logic to go to offlineSync service sync()
         }
         else{
-
+          // logic to go to offlineSync service sync()
         }
       }
     };
