@@ -79,6 +79,10 @@ angular.module('bahmni.common.offline')
                 return $q.when(patientData);
             };
 
+            var getAllAddressesByLevelId = function (levelId) {
+                return offlineAddressHierarchyDbService.getParentAddressByLevelId(levelId);
+            };
+
             var getAddress = function (person) {
                 return person.addresses[0] || person.preferredAddress || {};
             };
@@ -184,6 +188,10 @@ angular.module('bahmni.common.offline')
 
             var searchAddress = function (params) {
                 return offlineAddressHierarchyDbService.search(params);
+            };
+
+            var getAddressesHeirarchyLevels = function () {
+                return offlineAddressHierarchyDbService.getAddressesHeirarchyLevels();
             };
 
             var getConfig = function (module) {
@@ -384,6 +392,8 @@ angular.module('bahmni.common.offline')
                 insertForm: insertForm,
                 getFormByUuid: getFormByUuid,
                 getAllForms: getAllForms,
-                getPatientsCount: getPatientsCount
+                getPatientsCount: getPatientsCount,
+                getAllAddressesByLevelId: getAllAddressesByLevelId,
+                getAddressesHeirarchyLevels: getAddressesHeirarchyLevels
             };
         }]);
