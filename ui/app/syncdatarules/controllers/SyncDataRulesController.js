@@ -120,9 +120,9 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     var populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
         var levelIds = levels.map((id) => id.addressHierarchyLevelId);
-        LEVEL_PROVINCE = levelIds[0];
+        LEVEL_PROVINCE = levelIds[2];
         LEVEL_DISTRICT = levelIds[1];
-        LEVEL_FACILITY = levelIds[2];
+        LEVEL_FACILITY = levelIds[0];
 
         levelIds.forEach(function (id) {
           offlineDbService.getAllAddressesByLevelId(id).then(function (add) {
