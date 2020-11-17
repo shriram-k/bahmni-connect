@@ -23,18 +23,6 @@ angular.module('bahmni.home')
             var getLoginLocationUuid = function () {
                 return $bahmniCookieStore.get(Bahmni.Common.Constants.locationCookieName) ? $bahmniCookieStore.get(Bahmni.Common.Constants.locationCookieName).uuid : null;
             };
-            var getLastLoggedinLocation = function () {
-                return _.find(initialData.locations, function (location) {
-                    return location.uuid === getLoginLocationUuid();
-                });
-            };
-
-            $scope.loginInfo.currentLocation = getLastLoggedinLocation();
-
-            if ($stateParams.showLoginMessage) {
-                $scope.errorMessageTranslateKey = "LOGIN_LABEL_LOGIN_ERROR_MESSAGE_KEY";
-            }
-
             var redirectToLandingPageIfAlreadyAuthenticated = function () {
                 sessionService.get().then(function (data) {
                     if (data.authenticated) {
@@ -43,9 +31,6 @@ angular.module('bahmni.home')
                 });
             };
 
-            if ($location.path() === loginPagePath) {
-                redirectToLandingPageIfAlreadyAuthenticated();
-            }
             var onSuccessfulAuthentication = function () {
                 if (isOfflineApp) {
                     var encryptedPassword = offlineService.encrypt($scope.loginInfo.password, Bahmni.Common.Constants.encryptionType.SHA3);
@@ -56,9 +41,24 @@ angular.module('bahmni.home')
                     path: '/',
                     expires: 1
                 });
-                $rootScope.$broadcast('event:auth-loggedin');
+                //$rootScope.$broadcast('event:auth-loggedin');
                 $scope.loginInfo.currentLocation = getLastLoggedinLocation();
             };
+
+            var getLastLoggedinLocation = function () {
+                return _.find(initialData.locations, function (location) {
+                    return location.uuid === getLoginLocationUuid();
+                });
+            };
+            $scope.loginInfo.currentLocation = getLastLoggedinLocation();
+            if ($stateParams.showLoginMessage) {
+
+                $scope.errorMessageTranslateKey = "LOGIN_LABEL_LOGIN_ERROR_MESSAGE_KEY";
+
+            }
+            if ($location.path() === loginPagePath) {
+                redirectToLandingPageIfAlreadyAuthenticated();
+            }
             $scope.focusFixing = function () {
                 $('.nya-bs-select .dropdown-menu > li > a').blur();
                 console.log("called");

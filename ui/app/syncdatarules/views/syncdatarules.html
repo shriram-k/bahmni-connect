@@ -1,0 +1,105 @@
+<link rel="stylesheet" href="../styles/syncdatarules.css"/>
+<div class="opd-header-wrapper" ng-controller="SyncDataRulesController">
+  <div class="opd-header-top">
+    <a class="back-btn" ng-class="{'dashboard-link':backLink.image}" accesskey="h" ng-href="../home/index.html"
+      ng-click="closeAllDialogs()" id="" title="" href="../home/index.html">
+      <i class="fa fa-home"></i>
+    </a>
+  </div>
+</div>
+
+<section class="block sync-rules-section">
+  <h2 class="section-title">Sync Data Rules</h2>
+  <div class="sync-data-rules-container">
+    <form>
+      <div class="mb20">
+        <input type="radio" id="full-sync" name="sync-stratergy" ng-model="state.sync_stratergy" value="full" ng-click="showSelect('N')" ng-change="resetAllFilters()">
+        <label for="full-sync">Full Sync</label>
+      </div>
+
+      <div class="mb20">
+        <input type="radio" id="selective-sync" name="sync-stratergy" ng-model="state.sync_stratergy" value="selective" ng-click="showSelect('Y')">
+        <label for="selective-sync">Selective Sync</label>
+      </div>
+
+
+      <div ng-show="state.isSelectVisible"  class="mb20">
+
+        <div class=" mb20">
+
+          <div class="grid-item">Select Province: </div>
+
+          <div class="dropdown grid-item">
+            <div class="selected-items-box" id="province-select">
+              <ul class="selected-list">
+                <li ng-show="selectedProvinceNames().length == 0" class="default-option">--- Select Provinces ---<i class="fa fa-caret-down pull-right"></i></li>
+                <li class="selected-list-item info" ng-repeat="province in selectedProvinceNames()" class="label info">{{province}}</li>
+              </ul>
+            </div>
+
+            <div class="province-list list">
+              <ul class="items-list">
+                <li ng-repeat="address in state.provinceAddressList">
+                  <input type="checkbox" ng-model="address.selected" ng-change="filterDistrict()"/>
+                  <span>{{address.name}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class=" mb20" ng-show="selectedProvinceNames().length>0">
+          <div class="grid-item">Select District: </div> 
+
+          <div class="dropdown grid-item">
+            <div class="selected-items-box" id="district-select">
+              <ul class="selected-list">
+                <li ng-show="selectedDistrictNames().length == 0" class="default-option">--- Select Districts ---<i class="fa fa-caret-down pull-right"></i></li>
+                <li class="selected-list-item info" ng-repeat="province in selectedDistrictNames()" class="label info">{{province}}</li>
+              </ul>
+            </div>
+
+            <div class="district-list list">
+              <ul class="items-list">
+                <li ng-repeat="address in state.filteredDistrictList">
+                  <input type="checkbox" ng-model="address.selected" ng-change="filterFacility()"/>
+                  <span>{{address.name}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class=" mb20" ng-show="selectedDistrictNames().length>0">
+          <div class="grid-item">Select Facility: </div>
+          <div class="dropdown grid-item">
+            <div class="selected-items-box" id="facility-select">
+              <ul class="selected-list">
+                <li ng-show="selectedFacilityNames().length == 0" class="default-option">--- Select Facilities ---<i class="fa fa-caret-down pull-right"></i></li>
+                <li class="selected-list-item info" ng-repeat="province in selectedFacilityNames()" class="label info">{{province}}</li>
+              </ul>
+            </div>
+            
+            <div class="facility-list list">
+              <ul class="items-list">
+                <li ng-repeat="address in state.filteredFacilityList">
+                  <input type="checkbox" ng-model="address.selected" />
+                  <span>{{address.name}}</span>
+                </li>
+              </ul>
+            </div>
+            </div>
+        </div>
+
+      </div>
+      <p class="validation-error" ng-show="state.showValidationError">{{state.validationError}}</p>
+    
+      </br>
+      <div>
+        <input type="submit" ng-click="sync()" value="Start Sync" />
+      </div>
+    </form>
+  </div>
+
+  
+</section>
