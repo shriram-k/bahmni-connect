@@ -32,7 +32,7 @@
           <div class="dropdown grid-item">
             <div class="selected-items-box" id="province-select">
               <ul class="selected-list">
-                <li ng-show="selectedProvinceNames().length == 0">--- Select Provinces ---<i class="fa fa-caret-down pull-right"></i></li>
+                <li ng-show="selectedProvinceNames().length == 0" class="default-option">--- Select Provinces ---<i class="fa fa-caret-down pull-right"></i></li>
                 <li class="selected-list-item info" ng-repeat="province in selectedProvinceNames()" class="label info">{{province}}</li>
               </ul>
             </div>
@@ -54,7 +54,7 @@
           <div class="dropdown grid-item">
             <div class="selected-items-box" id="district-select">
               <ul class="selected-list">
-                <li ng-show="selectedDistrictNames().length == 0">--- Select Districts ---<i class="fa fa-caret-down pull-right"></i></li>
+                <li ng-show="selectedDistrictNames().length == 0" class="default-option">--- Select Districts ---<i class="fa fa-caret-down pull-right"></i></li>
                 <li class="selected-list-item info" ng-repeat="province in selectedDistrictNames()" class="label info">{{province}}</li>
               </ul>
             </div>
@@ -75,7 +75,7 @@
           <div class="dropdown grid-item">
             <div class="selected-items-box" id="facility-select">
               <ul class="selected-list">
-                <li ng-show="selectedFacilityNames().length == 0">--- Select Facilities ---<i class="fa fa-caret-down pull-right"></i></li>
+                <li ng-show="selectedFacilityNames().length == 0" class="default-option">--- Select Facilities ---<i class="fa fa-caret-down pull-right"></i></li>
                 <li class="selected-list-item info" ng-repeat="province in selectedFacilityNames()" class="label info">{{province}}</li>
               </ul>
             </div>

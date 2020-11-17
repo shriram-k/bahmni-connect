@@ -56,6 +56,11 @@
 
 }
 
+.default-option:hover {
+  background-color:white !important;
+  color: #363463
+}
+
 li:hover {
   background-color: #5897fb !important;
   color: white;
