@@ -109,10 +109,12 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     $scope.sync = function(){
       
-      if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames === 0){
+      if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames().length === 0){
         $scope.state.showValidationError = true;
-      };
-      console.log('Filters' ,$scope.state);
+      }else{
+        console.log('Filters' ,$scope.state);
+        $scope.state.showValidationError = false;
+      }
     };
 
     var populateList = function () {
