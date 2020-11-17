@@ -2,8 +2,8 @@
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
   "$scope",
-  "offlineDbService",
-  function ($scope, offlineDbService) {
+  "offlineDbService","offlineService",
+  function ($scope, offlineDbService,offlineService) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
 
@@ -112,8 +112,32 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         $scope.state.showValidationError = true;
       }else{
         var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
-        console.log('Filters' , config);
+        var filters = config.Province + (config.District.length !=0 ? ("-" +  config.District) : "") + (config.Facility.length !=0 ? ("-" + config.Facility) : "");
+        console.log('Filters' , filters);
         $scope.state.showValidationError = false;
+        //Override Marker.filters
+        if($scope.state.sync_stratergy === "selective"){
+          let categories = offlineService.getItem("eventLogCategories");
+        _.forEach(categories, function (category) {
+          console.log("category name is ->", category);
+          if(category === "patient" || category === "encounter"){
+          let marker = offlineDbService.getMarker(category);
+          let tempMarkers = [];
+            _.forEach(marker, function(markerEntry){
+              let filter = markerEntry;
+              console.log("Marker Filters are ->",filter.filters);
+              filter.filters = filter.filters + "-" + filters;
+              tempMarkers.push(filter);
+            });
+            marker = tempMarkers;
+            console.log("markers ->",marker);
+            offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, marker.filters);
+        }
+      });
+        }
+        else{
+
+        }
       }
     };
 
