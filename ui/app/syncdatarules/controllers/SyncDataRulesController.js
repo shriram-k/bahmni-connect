@@ -123,7 +123,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
            offlineDbService.getMarker(category).then(function(marker){
             let tempMarkers = [];
               _.forEach(marker.filters, function(markerEntry){
-                let filter = markerEntry;
+                let filter = markerEntry.split("-")[0];
                 filter = filter + "-" + filters;
                 tempMarkers.push(filter);
               });
