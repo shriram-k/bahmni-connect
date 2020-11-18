@@ -135,6 +135,19 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
         else{
           // logic to go to offlineSync service sync()
+          let categories = offlineService.getItem("eventLogCategories");
+        _.forEach(categories, function (category) {
+          if(category === "patient" || category === "encounter"){
+           offlineDbService.getMarker(category).then(function(marker){
+            let tempMarkers = [];
+              _.forEach(marker.filters, function(markerEntry){
+                let filter = markerEntry.split("-")[0];
+                tempMarkers.push(filter);
+              });
+              offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
+          });
+        }
+      });
         }
       }
     };
