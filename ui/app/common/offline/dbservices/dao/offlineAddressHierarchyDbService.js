@@ -164,8 +164,9 @@ angular.module('bahmni.common.offline')
 
         var getAddressesHeirarchyLevels = function () {
             var addressHierarchyLevelTable = db.getSchema().table('address_hierarchy_level');
-            return db.select(addressHierarchyLevelTable.addressHierarchyLevelId)
+            return db.select()
                 .from(addressHierarchyLevelTable)
+                .orderBy(addressHierarchyLevelTable.addressHierarchyLevelId)
                 .exec()
                 .then(function (result) {
                     return result;
