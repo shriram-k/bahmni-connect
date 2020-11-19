@@ -104,6 +104,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
 		$scope.loadState = function(){
       $scope.state;
+      $scope.addresses;
+      console.log('address', $scope.addresses);
     };
 
     $scope.sync = function(){
@@ -152,25 +154,20 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       }
     };
 
+
+
+    $scope.addresses = {}
+
     $scope.populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
-        var levelIds = levels.map((id) => id.addressHierarchyLevelId);
-        LEVEL_PROVINCE = levelIds[0];
-        LEVEL_DISTRICT = levelIds[1];
-        LEVEL_FACILITY = levelIds[2];
 
-        levelIds.forEach(function (id) {
-          offlineDbService.getAllAddressesByLevelId(id).then(function (add) {
-            if (id === LEVEL_PROVINCE) {
-              add.map((address) => addProviceAddress(address));
-              $scope.state.isDataAvailable= true;
-            } else if (id === LEVEL_DISTRICT) {
-              add.map((address) => addDistrictAddress(address));
-					  } else if (id === LEVEL_FACILITY) {
-              add.map((address) => addFacilityAddress(address));
-	    		  }
+
+        levels.forEach(function (level, index) {
+          offlineDbService.getAllAddressesByLevelId(level.addressHierarchyLevelId).then(function (address) {
+            $scope.addresses[`level_${index}`] = address;  
           });
         });
+        
       });
 		};
   
