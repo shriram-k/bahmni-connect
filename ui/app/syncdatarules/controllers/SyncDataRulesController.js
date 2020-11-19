@@ -46,7 +46,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       filteredFacilityList: [],
       isSelectVisible: false,
       validationError: "** Please Select Province **", 
-      showValidationError: false
+      showValidationError: false,
+      isDataAvailable: false
     };
 
     var addProviceAddress = function (address) {
@@ -101,14 +102,13 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       $scope.state.provinceAddressList.map(province => province.selected = false)
     };
 
-		$scope.showSelect = function(val){
-      $scope.state.isSelectVisible = val == 'Y';
-      if( val == 'N') $scope.state.showValidationError = false;
+		$scope.loadState = function(){
+      $scope.state;
     };
 
     $scope.sync = function(){
       
-      if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames().length === 0){
+      if($scope.selectedProvinceNames().length === 0){
         $scope.state.showValidationError = true;
       }else{
         var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
@@ -152,17 +152,18 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       }
     };
 
-    var populateList = function () {
+    $scope.populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
         var levelIds = levels.map((id) => id.addressHierarchyLevelId);
-        LEVEL_PROVINCE = levelIds[2];
+        LEVEL_PROVINCE = levelIds[0];
         LEVEL_DISTRICT = levelIds[1];
-        LEVEL_FACILITY = levelIds[0];
+        LEVEL_FACILITY = levelIds[2];
 
         levelIds.forEach(function (id) {
           offlineDbService.getAllAddressesByLevelId(id).then(function (add) {
             if (id === LEVEL_PROVINCE) {
               add.map((address) => addProviceAddress(address));
+              $scope.state.isDataAvailable= true;
             } else if (id === LEVEL_DISTRICT) {
               add.map((address) => addDistrictAddress(address));
 					  } else if (id === LEVEL_FACILITY) {
@@ -172,7 +173,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         });
       });
 		};
-
-    populateList();
+  
+    //populateList();
   },
 ]);
