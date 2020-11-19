@@ -7,8 +7,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
 
-      if(e.currentTarget.id == "province-select") {
-        $('.province-list').slideToggle('fast');
+      if(e.currentTarget.id == "Province-select") {
+        $('.Province-list').slideToggle('fast');
       }
       else if(e.currentTarget.id == "district-select") {
         $('.district-list').slideToggle('fast');
@@ -105,7 +105,20 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 		$scope.loadState = function(){
       $scope.state;
       $scope.addresses;
-      console.log('address', $scope.addresses);
+      for(let key in $scope.addresses)
+      {
+        let idToHide = '#'+ key.split("_")[1] + '-block';
+        if(key.split("_")[1] !== '0')
+          $(idToHide).hide();
+      }
+    };
+
+    $scope.handleDropDowns = function(selectedId) {
+      console.log(selectedId);
+      let targetToShow = parseInt(selectedId) + 1;
+      targetToShow += '-block';
+      let temp ='#'+targetToShow;
+      $(temp).show();
     };
 
     $scope.sync = function(){
@@ -161,10 +174,11 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     $scope.populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
 
-
         levels.forEach(function (level, index) {
           offlineDbService.getAllAddressesByLevelId(level.addressHierarchyLevelId).then(function (address) {
-            $scope.addresses[`level_${index}`] = address;  
+            //$scope.addresses[`level_${index}`] = address;  
+            $scope.addresses[`${level.name}_${index}`] = address; 
+            $('#loadData').click(); 
           });
         });
         

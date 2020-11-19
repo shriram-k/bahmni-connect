@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../styles/syncdatarules.css"/>
+<link rel="stylesheet" href="../styles/syncdatarules.css" />
 <div class="opd-header-wrapper" ng-controller="SyncDataRulesController">
   <div class="opd-header-top">
     <a class="back-btn" ng-class="{'dashboard-link':backLink.image}" accesskey="h" ng-href="../home/index.html"
@@ -9,10 +9,36 @@
 </div>
 
 <section class="block sync-rules-section">
-  <h2 class="section-title">Sync Data Rules</h2>
+  <h2 class="section-title" id="loadData" ng-click="loadState()">Selective Sync</h2>
   <div data-ng-init="populateList()" class="sync-data-rules-container">
     <form>
-        <div class="mb20">
+
+      <div class="mb20" ng-repeat="(key, value) in addresses">
+        <div class="grid-item" id="{{key.split('_')[1]}}-block"> Select {{key.split('_')[0]}}:
+        <div class="dropdown grid-item">
+          <div class="selected-items-box" id="{{key.split('_')[0]}}-select" >
+            <ul class="selected-list" >
+              <li ng-show="selectedProvinceNames().length == 0" class="default-option">--- Select {{key.split('_')[0]}}'s ---<i
+                  class="fa fa-caret-down pull-right"></i></li>
+              <li class="selected-list-item info" ng-repeat="province in selectedProvinceNames()" class="label info">
+                {{province}}</li>
+            </ul>
+          </div>
+<!-- <div ng-repeat="address in value"><p>{{address.name}}</p></div> -->
+          <div class="{{key.split('_')[0]}}-list list">
+            <ul class="items-list">
+              <li ng-repeat="address in value">
+                <input type="checkbox" ng-model="address.selected" ng-change="filterDistrict()" />
+                <span>{{address.name}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      </div>
+  </div>
+
+  <!-- <div class="mb20">
           <div class="grid-item">Select Province: </div>
 
           <div class="dropdown grid-item">
@@ -75,16 +101,16 @@
               </ul>
             </div>
             </div>
-        </div>
+        </div> -->
 
-      <p class="validation-error" ng-show="state.showValidationError">{{state.validationError}}</p>
-    
-      </br>
-      <div>
-        <input type="submit" ng-click="sync()" value="Start Sync" />
-      </div>
-    </form>
+  <p class="validation-error" ng-show="state.showValidationError">{{state.validationError}}</p>
+
+  </br>
+  <div>
+    <input type="submit" ng-click="sync()" value="Start Sync" />
+  </div>
+  </form>
   </div>
 
-  
+
 </section>
