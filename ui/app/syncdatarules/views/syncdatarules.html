@@ -18,9 +18,9 @@
         <div class="dropdown grid-item">
           <div class="selected-items-box" id="{{key.split('_')[0]}}-select" >
             <ul class="selected-list" >
-              <li ng-show="selectedProvinceNames().length == 0" class="default-option">--- Select {{key.split('_')[0]}}'s ---<i
+              <li ng-show="selecteLevelNames(key).length == 0" class="default-option">--- Select {{key.split('_')[0]}}'s ---<i
                   class="fa fa-caret-down pull-right"></i></li>
-              <li class="selected-list-item info" ng-repeat="province in selectedProvinceNames()" class="label info">
+              <li class="selected-list-item info" ng-repeat="province in selecteLevelNames(key)" class="label info">
                 {{province}}</li>
             </ul>
           </div>
@@ -28,7 +28,7 @@
           <div class="{{key.split('_')[0]}}-list list">
             <ul class="items-list">
               <li ng-repeat="address in value">
-                <input type="checkbox" ng-model="address.selected" ng-change="filterDistrict()" />
+                <input type="checkbox" ng-model="address.selected" ng-change="filterLevels(key)" />
                 <span>{{address.name}}</span>
               </li>
             </ul>
