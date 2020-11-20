@@ -2,8 +2,8 @@
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
   "$scope",
-  "offlineDbService","offlineService",
-  function ($scope, offlineDbService,offlineService) {
+  "offlineDbService","offlineService",'schedulerService',
+  function ($scope, offlineDbService,offlineService,schedulerService) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
 
@@ -19,7 +19,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     });
 
-    $(document).mouseup(function(e) 
+    $(document).mouseup(function(e)
     {
       var container = new Array();
       container.push($('.list'));
@@ -45,7 +45,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       filteredDistrictList: [],
       filteredFacilityList: [],
       isSelectVisible: false,
-      validationError: "** Please Select Province **", 
+      validationError: "** Please Select Province **",
       showValidationError: false
     };
 
@@ -107,7 +107,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     };
 
     $scope.sync = function(){
-      
+
       if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames().length === 0){
         $scope.state.showValidationError = true;
       }else{
@@ -149,6 +149,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
       });
         }
+
+        schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
       }
     };
 
