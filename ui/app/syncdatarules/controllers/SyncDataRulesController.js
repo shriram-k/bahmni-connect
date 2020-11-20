@@ -5,101 +5,46 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
   "offlineDbService", "offlineService",
   function ($scope, offlineDbService, offlineService) {
 
-    // $(document).mouseup(function(e) 
-    // {
-    //   var container = new Array();
-    //   container.push($('.list'));
-    //   $.each(container, function(key, value) {
-    //     if (!$(value).is(e.target) // if the target of the click isn't the container...
-    //         && $(value).has(e.target).length === 0) // ... nor a descendant of the container
-    //     {
-    //         $(value).hide();
-    //     }
-    //   });
-    // });
-
-    var LEVEL_PROVINCE;
-    var LEVEL_DISTRICT;
-    var LEVEL_FACILITY;
-
-    var districtAddressList = [];
-    var facilityAddressList = [];
-
     $scope.state = {
-      sync_stratergy: "full",
-      provinceAddressList: [],
-      filteredDistrictList: [],
-      filteredFacilityList: [],
-      isSelectVisible: false,
+      sync_stratergy: "selective",
       validationError: "** Please Select Province **",
       showValidationError: false,
       isDataAvailable: false
     };
 
-    var addProviceAddress = function (address) {
-      $scope.state.provinceAddressList.push(address);
-    };
-
-    var addDistrictAddress = function (address) {
-      districtAddressList.push(address);
-    };
-
-    var addFacilityAddress = function (address) {
-      facilityAddressList.push(address);
-    };
-
-    $scope.filterDistrict = function () {
-      resetSecondaryFilters();
-      var selectedProvincesParentIds = $scope.state.provinceAddressList.filter(province => province.selected).map(province => province.id);
-      $scope.state.filteredDistrictList = districtAddressList.filter(dist => selectedProvincesParentIds.includes(dist.parentId));
-    };
-
-    $scope.filterFacility = function () {
-      var selectedDistrictParentIds = districtAddressList.filter(district => district.selected).map(district => district.id);
-      $scope.state.filteredFacilityList = facilityAddressList.filter(fac => selectedDistrictParentIds.includes(fac.parentId));
-    };
-
-    $scope.selectedProvinceNames = function () {
-      return $scope.state.provinceAddressList.filter(
-        province => province.selected
-      ).map(prov => prov.name)
-    };
-
     $scope.selecteLevelNames = function (level) {
-        if ($scope.addresses.hasOwnProperty(level)) {
-          return $scope.addresses[level].filter(
+        if ($scope.addressesToFilter.hasOwnProperty(level)) {
+          return $scope.addressesToFilter[level].filter(
             address => address.selected
           ).map(prov => prov.name)
         }
     };
 
-    $scope.filterLevels = function(level){//Province_0
-      let targetToShow = parseInt(level.split('_')[1]) + 1;
+    $scope.getLevel = function(levelKey){
+      return levelKey.split("_")[1];
+    };
+
+    $scope.getLevelName = function(levelKey){
+      return levelKey.split("_")[0];
+    };
+
+    $scope.filterLevels = function(level){
+      let levelIndex = $scope.getLevel(level);
+      let targetToShow = parseInt(levelIndex) + 1;
       targetToShow += '-block';
       let temp = '#' + targetToShow;
       $scope.idsToShow.push(temp);
-      var selectedParentIds = $scope.addresses[level].filter(province => province.selected).map(province => province.id);
-      var indexToMatch = parseInt(level.split('_')[1]) + 1;
-      for (let key in $scope.addresses) {
+      var selectedParentIds = $scope.addressesToFilter[level].filter(province => province.selected).map(province => province.id);
+      var indexToMatch = parseInt(levelIndex) + 1;
+      for (let key in $scope.addressesToFilter) {
             if(key.includes(indexToMatch))
             {
-              $scope.addresses[key] = $scope.addresses[key].filter(levelToFilter => selectedParentIds.includes(levelToFilter.parentId));
+              let tempAddresses = $scope.addresses;
+              $scope.addressesToFilter[key] = tempAddresses[key].filter(levelToFilter => selectedParentIds.includes(levelToFilter.parentId));
+              break;
             }
       }
-      //$scope.state.filteredDistrictList = districtAddressList.filter(dist => selectedProvincesParentIds.includes(dist.parentId));
-    };
-
-    $scope.selectedDistrictNames = function () {
-      return $scope.state.filteredDistrictList.filter(
-        dist => dist.selected
-      ).map(prov => prov.name)
-    };
-
-    $scope.selectedFacilityNames = function () {
-      return $scope.state.filteredFacilityList.filter(
-        fac => fac.selected
-      ).map(fac => fac.name)
-    };
+     };
 
     var resetSecondaryFilters = function () {
       $scope.state.filteredDistrictList = [];
@@ -112,38 +57,21 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       $scope.state.provinceAddressList.map(province => province.selected = false)
     };
 
+    $scope.openDropDown = function(dropDownId) {
+      let targetClass = '.'+ $scope.getLevelName(dropDownId) +'-list';
+      $(targetClass).slideToggle('fast');
+    };
+
     $scope.loadState = function () {
       $scope.state;
       $scope.addresses;
       for (let key in $scope.addresses) {
-        let idToHide = '#' + key.split("_")[1] + '-block';
-        if (key.split("_")[1] === '0') {
+        let levelIndex = $scope.getLevel(key);
+        let idToHide = '#' + levelIndex + '-block';
+        if (levelIndex === '0') {
           $scope.idsToShow.push(idToHide);
         }
       }
-
-      $('.selected-items-box').unbind('click').bind('click', function (e) {
-
-        if (e.currentTarget.id == "Province-select") {
-          $('.Province-list').slideToggle('fast');
-        }
-        else if (e.currentTarget.id == "District-select") {
-          $('.District-list').slideToggle('fast');
-        }
-        else if (e.currentTarget.id == "Facility-select") {
-          $('.Facility-list').slideToggle('fast');
-        }
-
-      });
-    };
-
-    $scope.handleDropDowns = function (selectedId) {
-      console.log(selectedId);
-      let targetToShow = parseInt(selectedId) + 1;
-      targetToShow += '-block';
-      let temp = '#' + targetToShow;
-      $scope.idsToShow.push(temp);
-      $(temp).show();
     };
 
     $scope.display = function (idOfBlock) {
@@ -155,39 +83,43 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     }
 
     $scope.sync = function () {
+      $scope.addressesToFilter;
 
-      if ($scope.selectedProvinceNames().length === 0) {
-        $scope.state.showValidationError = true;
-      } else {
-        var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
-        var filters = config.Province + (config.District.length != 0 ? ("-" + config.District) : "") + (config.Facility.length != 0 ? ("-" + config.Facility) : "");
-        console.log('Filters', filters);
-        $scope.state.showValidationError = false;
-        //Override Marker.filters
-        //if($scope.state.sync_stratergy === "selective"){
-        let categories = offlineService.getItem("eventLogCategories");
-        _.forEach(categories, function (category) {
-          if (category === "patient" || category === "encounter") {
-            offlineDbService.getMarker(category).then(function (marker) {
-              let tempMarkers = [];
-              _.forEach(marker.filters, function (markerEntry) {
-                let filter = markerEntry.split("-")[0];
-                filter = filter + "-" + filters;
-                tempMarkers.push(filter);
-              });
-              offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
-            });
-          }
-        });
-        // logic to go to offlineSync service sync()
-        //}
+      for(key in $scope.addressesToFilter){
+        $scope.addressesToFilter[key].filter(level => level.selected);
       }
+
+      // if ($scope.selectedProvinceNames().length === 0) {
+      //   $scope.state.showValidationError = true;
+      // } else {
+      //   var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
+      //   var filters = config.Province + (config.District.length != 0 ? ("-" + config.District) : "") + (config.Facility.length != 0 ? ("-" + config.Facility) : "");
+       
+
+
+      //   $scope.state.showValidationError = false;
+        
+      //   let categories = offlineService.getItem("eventLogCategories");
+      //   _.forEach(categories, function (category) {
+      //     if (category === "patient" || category === "encounter") {
+      //       offlineDbService.getMarker(category).then(function (marker) {
+      //         let tempMarkers = [];
+      //         _.forEach(marker.filters, function (markerEntry) {
+      //           let filter = markerEntry.split("-")[0];
+      //           filter = filter + "-" + filters;
+      //           tempMarkers.push(filter);
+      //         });
+      //         offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
+      //       });
+      //     }
+      //   });
+      // }
     };
 
 
 
     $scope.addresses = {}
-    $scope.addressesToFilter = $scope.addresses;
+    $scope.addressesToFilter = {};
     $scope.idsToShow = [];
 
     $scope.populateList = function () {
@@ -197,6 +129,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           offlineDbService.getAllAddressesByLevelId(level.addressHierarchyLevelId).then(function (address) {
             //$scope.addresses[`level_${index}`] = address;  
             $scope.addresses[`${level.name}_${index}`] = address;
+            $scope.addressesToFilter[`${level.name}_${index}`] = address;
             $('#loadData').click();
           });
         });
