@@ -1,9 +1,19 @@
 "use strict";
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
-  "$scope",
-  "offlineDbService", "offlineService",
-  function ($scope, offlineDbService, offlineService) {
+  "$scope","offlineDbService", "offlineService", 'schedulerService', 'eventQueue','spinner', "$q",
+  function ($scope, offlineDbService, offlineService, schedulerService, eventQueue,spinner, $q) {
+
+  
+
+    $scope.isOfflineApp = offlineService.isOfflineApp();
+
+    var init = function () {
+      console.log("in sync data rules init: ", $scope.isOfflineApp);
+      if ($scope.isOfflineApp) {
+          setWatchersForErrorStatus();
+      }
+  };
 
     $scope.state = {
       sync_stratergy: "selective",
@@ -77,16 +87,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       });
     }
 
-    var resetSecondaryFilters = function () {
-      $scope.state.filteredDistrictList = [];
-      $scope.state.filteredFacilityList = [];
-    };
 
-    $scope.resetAllFilters = function () {
-      $scope.state.filteredDistrictList = [];
-      $scope.state.filteredFacilityList = [];
-      $scope.state.provinceAddressList.map(province => province.selected = false)
-    };
 
     $scope.openDropDown = function (dropDownId) {
       let targetClass = '.' + $scope.getLevelName(dropDownId) + '-list';
@@ -137,6 +138,76 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       }
       $scope.filterLevels(level);
     };
+  var cleanUpListenerSchedulerStage = $scope.$on("schedulerStage", function (event, stage, restartSync) {
+      $scope.isSyncing = (stage !== null);
+      if (restartSync) {
+          schedulerService.stopSync();
+          schedulerService.sync();
+      }
+  });
+
+  $scope.$on("$destroy", cleanUpListenerSchedulerStage);
+
+    $scope.getStatusStyleCode = function () {
+      return $scope.syncStatusMessage && ($scope.syncStatusMessage.match(/.*Success.*/i) ? 'success' : $scope.syncStatusMessage.match(/.*Pending.*/i) ? 'pending' : $scope.syncStatusMessage.match(/.*Failed.*/i) ? 'fail' : 'inProgress');
+    };
+
+    var getLastSyncTime = function () {
+      var date = offlineService.getItem('lastSyncTime');
+      var localeDate = Bahmni.Common.Util.DateUtil.parseServerDateToDate(date);
+      $scope.lastSyncTime = Bahmni.Common.Util.DateUtil.getDateTimeInSpecifiedFormat(localeDate, "dddd, MMMM Do YYYY, HH:mm:ss");
+    };
+
+    var getErrorCount = function () {
+      return eventQueue.getErrorCount().then(function (errorCount) {
+        return errorCount;
+      });
+    };
+
+    var getEventCount = function () {
+      return eventQueue.getCount().then(function (eventCount) {
+        return eventCount;
+      });
+    };
+
+    var updateSyncStatusMessageBasedOnQueuesCount = function () {
+      getErrorCount().then(function (errorCount) {
+        if (errorCount) {
+          $scope.syncStatusMessage = Bahmni.Common.Constants.syncStatusMessages.syncFailed;
+        } else {
+          getEventCount().then(function (eventCount) {
+            $scope.syncStatusMessage = eventCount ? Bahmni.Common.Constants.syncStatusMessages.syncPending : updateLastSyncTimeOnSuccessfullSyncAnReturnSuccessMessage();
+          });
+        }
+      });
+    };
+
+    var updateLastSyncTimeOnSuccessfullSyncAnReturnSuccessMessage = function () {
+      if ($scope.isSyncing !== undefined) {
+        offlineService.setItem('lastSyncTime', new Date());
+        getLastSyncTime();
+      }
+      return Bahmni.Common.Constants.syncStatusMessages.syncSuccess;
+    };
+
+    var getSyncStatusInfo = function () {
+      getLastSyncTime();
+      $scope.isSyncing ? $scope.syncStatusMessage = "Sync in Progress..." : updateSyncStatusMessageBasedOnQueuesCount();
+    };
+    getSyncStatusInfo();
+
+    var setErrorStatusOnErrorsInSync = function () {
+      offlineDbService.getAllLogs().then(function (errors) {
+          $scope.errorsInSync = !!errors.length;
+      });
+  };
+
+    var setWatchersForErrorStatus = function () {
+      $scope.$watch('isSyncing', function () {
+          getSyncStatusInfo();
+          setErrorStatusOnErrorsInSync();
+      });
+  };
 
     $scope.sync = function () {
       let selectedAddresses = angular.copy($scope.addressesToFilter);
@@ -155,33 +226,28 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             $scope.state.showValidationError = true;
           }
         }
+        //Override Marker.filters
+        if ($scope.state.sync_stratergy === "selective") {
+          let categories = offlineService.getItem("eventLogCategories");
+          _.forEach(categories, function (category) {
+            if (category === "patient" || category === "encounter") {
+              offlineDbService.getMarker(category).then(function (marker) {
+                let tempMarkers = [];
+                _.forEach(marker.filters, function (markerEntry) {
+                  let filter = markerEntry.split("-")[0];
+                  filter = filter + "-" + filters;
+                  tempMarkers.push(filter);
+                });
+                offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
+              });
+            }
+          });
+          // logic to go to offlineSync service sync()
+          schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
+        }
+        
       }
 
-      // if ($scope.selectedProvinceNames().length === 0) {
-      //   $scope.state.showValidationError = true;
-      // } else {
-      //   var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
-      //   var filters = config.Province + (config.District.length != 0 ? ("-" + config.District) : "") + (config.Facility.length != 0 ? ("-" + config.Facility) : "");
-
-
-
-      //   $scope.state.showValidationError = false;
-
-      //   let categories = offlineService.getItem("eventLogCategories");
-      //   _.forEach(categories, function (category) {
-      //     if (category === "patient" || category === "encounter") {
-      //       offlineDbService.getMarker(category).then(function (marker) {
-      //         let tempMarkers = [];
-      //         _.forEach(marker.filters, function (markerEntry) {
-      //           let filter = markerEntry.split("-")[0];
-      //           filter = filter + "-" + filters;
-      //           tempMarkers.push(filter);
-      //         });
-      //         offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
-      //       });
-      //     }
-      //   });
-      // }
     };
 
     $scope.populateList = function () {
@@ -201,6 +267,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       });
     };
 
-    //populateList();
+
+    return spinner.forPromise($q.all(init()));
   },
 ]);

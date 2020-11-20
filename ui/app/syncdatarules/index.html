@@ -63,11 +63,11 @@
 <script src="../common/models/age.js"></script>
 <script src="../lib/angular-workers/dist/angular-workers.js"></script>
 <script src="../common/offline/init.js"></script>
-<script src="../common/offline/offlineService.js"></script>
-<script src="../common/offline/services/dbNameService.js"></script>
 <script src="../common/logging/init.js"></script>
 <script src="../common/logging/exceptionHandler.js"></script>
-<script src="../common/logging/offline/offlineLoggingService.js"></script>
+<script src="../common/offline/offlineService.js"></script>
+<script src="../common/offline/services/dbNameService.js"></script>
+
 
 <script src="../common/offline/initializeOfflineSchema.js"></script>
 <script src="../common/offline/offlineDbInitialization.js"></script>
@@ -104,7 +104,13 @@
 <script src="../common/offline/dbservices/dao/formDbService.js"></script>
 <script src="../common/offline/services/dbNameService.js"></script>
 
+<script src="../common/logging/services/loggingService.js"></script>
+<script src="../common/logging/offline/offlineLoggingService.js"></script>
+<script src="../common/logging/offline/chromeLoggingService.js"></script>
+
 <script src="../common/offline/offlineDbInitialization.js"></script>
+<script src="../components/hustle/hustle.js"></script>
+<script src="../common/offline/scheduler/eventQueue.js"></script>
 <script src="../common/offline/scheduler/scheduledSync.js"></script>
 <script src="../common/offline/scheduler/scheduledJob.js"></script>
 <script src="../common/offline/offlinePush.js"></script>
@@ -112,6 +118,7 @@
 <script src="../common/offline/scheduler/MultiStageWorker.js"></script>
 <script src="../common/offline/services/schedulerService.js"></script>
 <script src="../common/offline/services/appUpdateService.js"></script>
+<script src="../common/offline/services/chrome/chromeAppInfoStrategy.js"></script>
 <!-- endbuild -->
 
 
@@ -170,7 +177,6 @@
 <script src="../common/ui-helper/directives/focusOnInputErrors.js"></script>
 <script src="../common/ui-helper/directives/fixedFirstColumn.js"></script>
 <script src="../common/ui-helper/directives/assignHeight.js"></script>
-
 <script src="../components/lovefield/dist/lovefield.js"></script>
 
 <script src="../common/i18n/init.js"></script>
