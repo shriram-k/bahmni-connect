@@ -108,8 +108,9 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       for(let key in $scope.addresses)
       {
         let idToHide = '#'+ key.split("_")[1] + '-block';
-        if(key.split("_")[1] !== '0')
-          $(idToHide).hide();
+        if(key.split("_")[1] === '0'){
+          $scope.idsToShow.push(idToHide);
+        }
       }
     };
 
@@ -118,8 +119,17 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       let targetToShow = parseInt(selectedId) + 1;
       targetToShow += '-block';
       let temp ='#'+targetToShow;
+      $scope.idsToShow.push(temp);
       $(temp).show();
     };
+
+    $scope.display = function(idOfBlock){
+      let temp = '#' + idOfBlock + '-block';
+      if($scope.idsToShow.indexOf(temp) == -1)
+        return false;
+        else 
+        return true;
+    }
 
     $scope.sync = function(){
       
@@ -131,7 +141,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         console.log('Filters' , filters);
         $scope.state.showValidationError = false;
         //Override Marker.filters
-        if($scope.state.sync_stratergy === "selective"){
+        //if($scope.state.sync_stratergy === "selective"){
           let categories = offlineService.getItem("eventLogCategories");
         _.forEach(categories, function (category) {
           if(category === "patient" || category === "encounter"){
@@ -147,29 +157,14 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
       });
        // logic to go to offlineSync service sync()
-        }
-        else{
-          // logic to go to offlineSync service sync()
-          let categories = offlineService.getItem("eventLogCategories");
-        _.forEach(categories, function (category) {
-          if(category === "patient" || category === "encounter"){
-           offlineDbService.getMarker(category).then(function(marker){
-            let tempMarkers = [];
-              _.forEach(marker.filters, function(markerEntry){
-                let filter = markerEntry.split("-")[0];
-                tempMarkers.push(filter);
-              });
-              offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
-          });
-        }
-      });
-        }
+        //}
       }
     };
 
 
 
     $scope.addresses = {}
+    $scope.idsToShow = [];
 
     $scope.populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {

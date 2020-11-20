@@ -14,7 +14,7 @@
     <form>
 
       <div class="mb20" ng-repeat="(key, value) in addresses">
-        <div class="grid-item" id="{{key.split('_')[1]}}-block"> Select {{key.split('_')[0]}}:
+        <div class="grid-item" id="{{key.split('_')[1]}}-block" ng-show="display(key.split('_')[1])"> Select {{key.split('_')[0]}}:
         <div class="dropdown grid-item">
           <div class="selected-items-box" id="{{key.split('_')[0]}}-select" >
             <ul class="selected-list" >
