@@ -36,7 +36,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       var indexToMatch = parseInt(levelIndex) + 1;
       for (let key in $scope.addressesToFilter) {
         if (key.includes(indexToMatch)) {
-          let tempAddresses = $scope.addresses;
+          let tempAddresses = angular.copy($scope.addresses);
           $scope.addressesToFilter[key] = tempAddresses[key].filter(levelToFilter => selectedParentIds.includes(levelToFilter.parentId));
           break;
         }
