@@ -14,94 +14,35 @@
     <form>
 
       <div class="mb20" ng-repeat="(key, value) in addressesToFilter">
-        <div class="grid-item" id="{{key.split('_')[1]}}-block" ng-show="display(key.split('_')[1])"> Select {{key.split('_')[0]}}:
-        <div class="dropdown grid-item">
-          <div class="selected-items-box" ng-click="openDropDown(key)" id="{{key.split('_')[0]}}-select" >
+        <div class="grid-item " id="{{key.split('_')[1]}}-block" ng-show="display(key.split('_')[1])"><h3> {{key.split('_')[0]}}:</h3>
+          <br/>
+          <div class="selected-items-container">
             <ul class="selected-list" >
-              <li ng-show="selecteLevelNames(key).length == 0" class="default-option">--- Select {{key.split('_')[0]}}'s ---<i
-                  class="fa fa-caret-down pull-right"></i></li>
-              <li class="selected-list-item info" ng-repeat="province in selecteLevelNames(key)" class="label info">
-                {{province}}</li>
-            </ul>
-          </div>
-          
-          <div class="{{key.split('_')[0]}}-list list">
-            <ul class="items-list">
-              <li ng-repeat="address in value">
-                <input type="checkbox" ng-model="address.selected" ng-change="filterLevels(key)" />
-                <span>{{address.name}}</span>
+              <li class="selected-list-item info" ng-repeat="level in selecteLevelNames(key)" >
+                {{level}}
               </li>
             </ul>
           </div>
-        </div>
-      </div>
-      </div>
-  </div>
-
-  <!-- <div class="mb20">
-          <div class="grid-item">Select Province: </div>
-
           <div class="dropdown grid-item">
-            <div class="selected-items-box" id="province-select" ng-click="loadState()">
-              <ul class="selected-list">
-                <li ng-show="selectedProvinceNames().length == 0" class="default-option">--- Select Provinces ---<i class="fa fa-caret-down pull-right"></i></li>
-                <li class="selected-list-item info" ng-repeat="province in selectedProvinceNames()" class="label info">{{province}}</li>
+            <div class="selected-items-box" ng-click="openDropDown(key)" id="{{key.split('_')[0]}}-select" >
+              <ul class="selected-list" >
+                <li class="default-option">--- Select {{key.split('_')[0]}}'s ---<i
+                    class="fa fa-caret-down pull-right"></i></li>
               </ul>
             </div>
-
-            <div class="province-list list">
+            
+            <div class="{{key.split('_')[0]}}-list list">
               <ul class="items-list">
-                <li ng-repeat="address in state.provinceAddressList">
-                  <input type="checkbox" ng-model="address.selected" ng-change="filterDistrict()"/>
-                  <span>{{address.name}}</span>
-                </li>
-              </ul>
-            </div>
-          </div>  
-        </div>
-
-        <div class=" mb20" ng-show="selectedProvinceNames().length>0">
-          <div class="grid-item">Select District: </div> 
-
-          <div class="dropdown grid-item">
-            <div class="selected-items-box" id="district-select">
-              <ul class="selected-list">
-                <li ng-show="selectedDistrictNames().length == 0" class="default-option">--- Select Districts ---<i class="fa fa-caret-down pull-right"></i></li>
-                <li class="selected-list-item info" ng-repeat="province in selectedDistrictNames()" class="label info">{{province}}</li>
-              </ul>
-            </div>
-
-            <div class="district-list list">
-              <ul class="items-list">
-                <li ng-repeat="address in state.filteredDistrictList">
-                  <input type="checkbox" ng-model="address.selected" ng-change="filterFacility()"/>
-                  <span>{{address.name}}</span>
+                <li ng-repeat="address in value">
+                  <input type="checkbox" ng-model="address.selected" id={{address.name}} ng-change="filterLevels(key)"  />
+                  <label for={{address.name}}>{{address.name}}</label>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-
-        <div class=" mb20" ng-show="selectedDistrictNames().length>0">
-          <div class="grid-item">Select Facility: </div>
-          <div class="dropdown grid-item">
-            <div class="selected-items-box" id="facility-select">
-              <ul class="selected-list">
-                <li ng-show="selectedFacilityNames().length == 0" class="default-option">--- Select Facilities ---<i class="fa fa-caret-down pull-right"></i></li>
-                <li class="selected-list-item info" ng-repeat="province in selectedFacilityNames()" class="label info">{{province}}</li>
-              </ul>
-            </div>
-            
-            <div class="facility-list list">
-              <ul class="items-list">
-                <li ng-repeat="address in state.filteredFacilityList">
-                  <input type="checkbox" ng-model="address.selected" />
-                  <span>{{address.name}}</span>
-                </li>
-              </ul>
-            </div>
-            </div>
-        </div> -->
+      </div>
+  </div>
 
   <p class="validation-error" ng-show="state.showValidationError">{{state.validationError}}</p>
 

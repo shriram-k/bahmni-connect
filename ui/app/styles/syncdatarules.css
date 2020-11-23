@@ -1,7 +1,7 @@
 .sync-rules-section {
   min-width: 50%;
   position: absolute;
-  padding: 2%;
+  padding: 40px;
   margin-top: 5%;
 }
 
@@ -111,7 +111,11 @@ li:hover {
   display: inline-block;
   margin-left: 5px;
   margin-top: 5px;
-  padding: 8px;
+  padding: 5px;
   color: white;
+}
+
+.selected-items-container{
+  max-width: 600px;
 }
 

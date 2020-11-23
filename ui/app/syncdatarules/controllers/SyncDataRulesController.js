@@ -180,7 +180,9 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         levels.forEach(function (level, index) {
           offlineDbService.getAllAddressesByLevelId(level.addressHierarchyLevelId).then(function (address) {
             //$scope.addresses[`level_${index}`] = address;  
-            $scope.addresses[`${level.name}_${index}`] = address;
+            $scope.addresses[`${level.name}_${index}`] = address.sort(function(a, b) { 
+              return a.name.localeCompare(b.name);
+            });
             $scope.addressesToFilter[`${level.name}_${index}`] = address;
             $('#loadData').click();
           });
