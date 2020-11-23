@@ -344,6 +344,17 @@ angular.module('bahmni.common.offline')
                 return formDbService.getAllForms();
             };
 
+            var deleteRecordsFromTable = function (table) {
+                switch (table) {
+                case 'patient' :
+                    patientDbService.deleteAllPatientRecords(db);
+                    break;
+                case 'encounter':
+                    encounterDbService.deleteAllEncounterRecords(db);
+                    break;
+                }
+            };
+
             return {
                 init: init,
                 initSchema: initSchema,
@@ -394,6 +405,7 @@ angular.module('bahmni.common.offline')
                 getAllForms: getAllForms,
                 getPatientsCount: getPatientsCount,
                 getAllAddressesByLevelId: getAllAddressesByLevelId,
-                getAddressesHeirarchyLevels: getAddressesHeirarchyLevels
+                getAddressesHeirarchyLevels: getAddressesHeirarchyLevels,
+                deleteRecordsFromTable: deleteRecordsFromTable
             };
         }]);
