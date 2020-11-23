@@ -2,8 +2,8 @@
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
   "$scope",
-  "offlineDbService",
-  function ($scope, offlineDbService) {
+  "offlineDbService","offlineService",'schedulerService',
+  function ($scope, offlineDbService,offlineService,schedulerService) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
 
@@ -19,7 +19,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     });
 
-    $(document).mouseup(function(e) 
+    $(document).mouseup(function(e)
     {
       var container = new Array();
       container.push($('.list'));
@@ -107,22 +107,58 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     };
 
     $scope.sync = function(){
-      
       if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames().length === 0){
         $scope.state.showValidationError = true;
       }else{
         var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
-        console.log('Filters' , config);
+        var filters = config.Province + (config.District.length !=0 ? ("-" +  config.District) : "") + (config.Facility.length !=0 ? ("-" + config.Facility) : "");
+        console.log('Filters' , filters);
         $scope.state.showValidationError = false;
+        //Override Marker.filters
+        if($scope.state.sync_stratergy === "selective"){
+          let categories = offlineService.getItem("eventLogCategories");
+        _.forEach(categories, function (category) {
+          if(category === "patient" || category === "encounter"){
+           offlineDbService.getMarker(category).then(function(marker){
+            let tempMarkers = [];
+              _.forEach(marker.filters, function(markerEntry){
+                let filter = markerEntry.split("-")[0];
+                filter = filter + "-" + filters;
+                tempMarkers.push(filter);
+              });
+              offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
+          });
+        }
+      });
+       // logic to go to offlineSync service sync()
+        }
+        else{
+          // logic to go to offlineSync service sync()
+          let categories = offlineService.getItem("eventLogCategories");
+        _.forEach(categories, function (category) {
+          if(category === "patient" || category === "encounter"){
+           offlineDbService.getMarker(category).then(function(marker){
+            let tempMarkers = [];
+              _.forEach(marker.filters, function(markerEntry){
+                let filter = markerEntry.split("-")[0];
+                tempMarkers.push(filter);
+              });
+              offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
+          });
+        }
+      });
+        }
+
+        schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
       }
     };
 
     var populateList = function () {
       offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
         var levelIds = levels.map((id) => id.addressHierarchyLevelId);
-        LEVEL_PROVINCE = levelIds[0];
+        LEVEL_PROVINCE = levelIds[2];
         LEVEL_DISTRICT = levelIds[1];
-        LEVEL_FACILITY = levelIds[2];
+        LEVEL_FACILITY = levelIds[0];
 
         levelIds.forEach(function (id) {
           offlineDbService.getAllAddressesByLevelId(id).then(function (add) {

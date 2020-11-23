@@ -34,6 +34,10 @@ angular.module('bahmni.common.offline')
                 return patientDbService.getPatientByUuid(preferredDb, uuid);
             };
 
+            var getPatientsCount = function() {
+                return patientDbService.getPatientsCount(db);
+            }
+
             var deletePatientData = function (uuid) {
                 var deferred = $q.defer();
                 var queries = [];
@@ -388,6 +392,7 @@ angular.module('bahmni.common.offline')
                 insertForm: insertForm,
                 getFormByUuid: getFormByUuid,
                 getAllForms: getAllForms,
+                getPatientsCount: getPatientsCount,
                 getAllAddressesByLevelId: getAllAddressesByLevelId,
                 getAddressesHeirarchyLevels: getAddressesHeirarchyLevels
             };
