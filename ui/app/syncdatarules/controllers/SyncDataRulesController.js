@@ -30,10 +30,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
     $scope.filterLevels = function (level) {
       let levelIndex = $scope.getLevel(level);
-      let targetToShow = parseInt(levelIndex) + 1;
-      targetToShow += '-block';
-      let temp = '#' + targetToShow;
-      $scope.verifyLevelHasSelected(level, temp);
+      let targetId = getTargetID(levelIndex, true);
+      $scope.verifyLevelHasSelected(level, targetId);
       var selectedParentIds = $scope.addressesToFilter[level].filter(province => province.selected).map(province => province.id);
       var indexToMatch = parseInt(levelIndex) + 1;
       for (let key in $scope.addressesToFilter) {
@@ -45,14 +43,32 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       }
     };
 
-    $scope.verifyLevelHasSelected = function (level, temp) {
+    $scope.verifyLevelHasSelected = function (level, targetId) {
+      let levelIndex = $scope.getLevel(level); //0,1,2
       let selectedLevelLength = $scope.addressesToFilter[level].filter(hierarchyLevel => hierarchyLevel.selected).length;
-      if (selectedLevelLength == 0) {
-        $scope.idsToShow = $scope.removeLevelToBeHidden(temp);
+      if (levelIndex == 0 && selectedLevelLength == 0) {
+        $scope.idsToShow = [];
+        $scope.idsToShow.push(getTargetID(levelIndex, false))
+      }
+      else if (levelIndex != 0 && selectedLevelLength == 0) {
+        //we need to visit indexes post current level and hide all of them
+        let indexToMatch = parseInt(levelIndex) + 1;
+        for (let key in $scope.addressesToFilter) {
+          if (key.includes(indexToMatch)) {
+            $scope.idsToShow = $scope.removeLevelToBeHidden(getTargetID(levelIndex, true));
+          }
+        }
       }
       else {
-        $scope.idsToShow.push(temp);
+        $scope.idsToShow.push(targetId);
       }
+    };
+
+    let getTargetID = function (levelIndex, next) {
+      let targetToToggle = (next ? parseInt(levelIndex) + 1 : levelIndex);
+      targetToToggle += '-block';
+      let targetId = '#' + targetToToggle;
+      return targetId;
     };
 
     $scope.removeLevelToBeHidden = function (value) {
@@ -100,11 +116,35 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     $scope.addressesToFilter = {};
     $scope.idsToShow = [];
 
-    $scope.sync = function () {
-      $scope.addressesToFilter;
+    let selectedLevelLength = function (addresses, level) {
+      return addresses[level].filter(hierarchyLevel => hierarchyLevel.selected).length;
+    };
 
-      for (let key in $scope.addressesToFilter) {
-        $scope.addressesToFilter[key] = $scope.addressesToFilter[key].filter(level => level.selected);
+    var getSelectedLevelNames = function (obj) {
+      var names = [];
+      for (var key in obj) {
+        names.push(obj[key].name);
+      }
+      return names;
+    }
+
+    $scope.sync = function () {
+      let selectedAddresses = angular.copy($scope.addressesToFilter);
+      let filters = "";
+      for (let key in selectedAddresses) {
+        selectedAddresses[key] = selectedAddresses[key].filter(level => level.selected);
+        if (selectedLevelLength(selectedAddresses, key) != 0 && key.includes('0')) {
+          filters += getSelectedLevelNames(selectedAddresses[key]);
+          $scope.state.showValidationError = false;
+        }
+        else if (selectedLevelLength(selectedAddresses, key) != 0 && !key.includes('0')) {
+          filters += "-" + getSelectedLevelNames(selectedAddresses[key]);
+        }
+        else {
+          if (key.includes('0')) {
+            $scope.state.showValidationError = true;
+          }
+        }
       }
 
       // if ($scope.selectedProvinceNames().length === 0) {
