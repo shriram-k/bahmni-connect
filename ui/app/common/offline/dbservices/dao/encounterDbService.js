@@ -73,11 +73,17 @@ angular.module('bahmni.common.offline')
                 });
         };
 
+        var deleteAllEncounterRecords = function (db) {
+            var encounter = db.getSchema().table('encounter');
+            return db.delete().from(encounter).exec();
+        };
+
         return {
             insertEncounterData: insertEncounterData,
             getEncountersByPatientUuid: getEncountersByPatientUuid,
             findActiveEncounter: findActiveEncounter,
             getEncounterByEncounterUuid: getEncounterByEncounterUuid,
-            getEncountersByVisits: getEncountersByVisits
+            getEncountersByVisits: getEncountersByVisits,
+            deleteAllEncounterRecords: deleteAllEncounterRecords
         };
     });

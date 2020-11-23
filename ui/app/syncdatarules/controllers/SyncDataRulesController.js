@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
-    "$scope", "offlineDbService", "offlineService", 'schedulerService', 'eventQueue', 'spinner', "$q",
-    function ($scope, offlineDbService, offlineService, schedulerService, eventQueue, spinner, $q) {
+    "$scope", "offlineDbService", "offlineService", 'schedulerService', 'eventQueue', 'spinner', "$q", "ngDialog",
+    function ($scope, offlineDbService, offlineService, schedulerService, eventQueue, spinner, $q, ngDialog) {
         $scope.isOfflineApp = offlineService.isOfflineApp();
 
         var init = function () {
@@ -299,6 +299,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                       });
                     }
                   });
+                  offlineDbService.deleteRecordsFromTable('patient');
+                  offlineDbService.deleteRecordsFromTable('encounter');
                   schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
                 }
               });
