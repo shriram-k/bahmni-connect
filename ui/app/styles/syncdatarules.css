@@ -94,7 +94,7 @@ li:hover {
 }
 
 .success {
-  background-color: #4CAF50;
+  color: #4CAF50;
 }
 
 .info {background-color: #2196F3;}
@@ -113,5 +113,40 @@ li:hover {
   margin-top: 5px;
   padding: 8px;
   color: white;
+}
+
+.syncStatusInfo {
+  text-align: center;
+  font-size: 14px;
+  width: 100%;
+  position: fixed;
+  bottom: 13px;
+  font-style: italic;
+  color: #666;
+}
+/* line 803, home/_home.scss */
+.syncStatusInfo .message {
+  font-style: normal;
+}
+/* line 806, home/_home.scss */
+.syncStatusInfo .pending {
+  color: #FDA319;
+}
+/* line 809, home/_home.scss */
+.syncStatusInfo .fail {
+  color: red;
+}
+/* line 812, home/_home.scss */
+.syncStatusInfo .success {
+  color: #53B76D;
+}
+/* line 815, home/_home.scss */
+.syncStatusInfo .inProgress {
+  color: black;
+}
+/* line 818, home/_home.scss */
+.syncStatusInfo p {
+  padding-bottom: 10px;
+  margin: 0;
 }
 
