@@ -48,24 +48,24 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         if (key.includes(indexToMatch)) {
           let tempAddresses = angular.copy($scope.addresses);
           $scope.addressesToFilter[key] = tempAddresses[key].filter(levelToFilter => selectedParentIds.includes(levelToFilter.parentId));
-          break;
+          indexToMatch = indexToMatch + 1 ;
         }
       }
     };
 
     $scope.verifyLevelHasSelected = function (level, targetId) {
-      let levelIndex = $scope.getLevel(level); //0,1,2
+      let levelIndex = $scope.getLevel(level); //0,1,2...
       let selectedLevelLength = $scope.addressesToFilter[level].filter(hierarchyLevel => hierarchyLevel.selected).length;
       if (levelIndex == 0 && selectedLevelLength == 0) {
         $scope.idsToShow = [];
         $scope.idsToShow.push(getTargetID(levelIndex, false))
       }
       else if (levelIndex != 0 && selectedLevelLength == 0) {
-        //we need to visit indexes post current level and hide all of them
         let indexToMatch = parseInt(levelIndex) + 1;
         for (let key in $scope.addressesToFilter) {
           if (key.includes(indexToMatch)) {
             $scope.idsToShow = $scope.removeLevelToBeHidden(getTargetID(levelIndex, true));
+            indexToMatch = indexToMatch + 1 ;
           }
         }
       }
@@ -86,8 +86,6 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         return ele != value;
       });
     }
-
-
 
     $scope.openDropDown = function (dropDownId) {
       let targetClass = '.' + $scope.getLevelName(dropDownId) + '-list';
@@ -113,6 +111,23 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       else
         return true;
     }
+
+    $scope.isParentSelected = function (key) {
+      let parentLevelId = parseInt($scope.getLevel(key)) - 1;
+      parentLevelId = parentLevelId >= 0 ? parentLevelId : -1;
+      let addressCopy = angular.copy($scope.addressesToFilter);
+      if (parentLevelId == -1)
+        return true;
+      else {
+        for (key in addressCopy) {
+          if (key.includes(parentLevelId)) {
+            let selectedLevelLength = addressCopy[key].filter(hierarchyLevel => hierarchyLevel.selected).length;
+            return selectedLevelLength == 0 ? false : true;
+          }
+        }
+      }
+    };
+
     $scope.addresses = {}
     $scope.addressesToFilter = {};
     $scope.idsToShow = [];
@@ -226,6 +241,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             $scope.state.showValidationError = true;
           }
         }
+      }
         //Override Marker.filters
         if ($scope.state.sync_stratergy === "selective") {
           let categories = offlineService.getItem("eventLogCategories");
@@ -245,8 +261,6 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           // logic to go to offlineSync service sync()
           schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
         }
-        
-      }
 
     };
 

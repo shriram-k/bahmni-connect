@@ -14,7 +14,7 @@
     <form>
 
       <div class="mb20" ng-repeat="(key, value) in addressesToFilter">
-        <div class="grid-item " id="{{key.split('_')[1]}}-block" ng-show="display(key.split('_')[1])"><h3> {{key.split('_')[0]}}:</h3>
+        <div class="grid-item " id="{{key.split('_')[1]}}-block" ng-show="display(key.split('_')[1]) && isParentSelected(key)"><h3> {{key.split('_')[0]}}:</h3>
           <br/>
           <div class="selected-items-container">
             <ul class="selected-list" >
