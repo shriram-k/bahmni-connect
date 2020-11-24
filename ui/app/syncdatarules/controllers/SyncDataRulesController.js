@@ -128,6 +128,16 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       return names;
     }
 
+    $scope.removeFromSelectedList = function(name, level){
+      let levelDetails = $scope.addressesToFilter[level];
+      for(let key in levelDetails){
+          if(levelDetails[key].name === name){
+            levelDetails[key].selected = false;
+          }
+      }
+      $scope.filterLevels(level);
+    };
+
     $scope.sync = function () {
       let selectedAddresses = angular.copy($scope.addressesToFilter);
       let filters = "";
