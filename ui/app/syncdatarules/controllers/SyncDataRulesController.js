@@ -243,7 +243,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
       }
         //Override Marker.filters
-        if ($scope.state.sync_stratergy === "selective") {
+        if (!$scope.state.showValidationError && $scope.state.sync_stratergy === "selective") {
           let categories = offlineService.getItem("eventLogCategories");
           _.forEach(categories, function (category) {
             if (category === "patient" || category === "encounter") {

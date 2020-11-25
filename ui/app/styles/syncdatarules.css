@@ -68,7 +68,7 @@ li:hover {
 
 .list {
   display: none;
-  height: 200px;
+  max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
   border-left: solid 1px #C7C6C7;
@@ -130,13 +130,14 @@ li:hover {
     font-size: 1em;
     font-weight: 700;
     padding: 0 4px;
+    margin-left: 8px
 }
 
 .syncStatusInfo {
   text-align: center;
   font-size: 14px;
   width: 100%;
-  position: fixed;
+  margin-top: 30px;
   bottom: 13px;
   font-style: italic;
   color: #666;
