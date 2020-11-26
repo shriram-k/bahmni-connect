@@ -226,8 +226,27 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
               getParentName(parentObject.parent,names);
             }
         };
+
+
+    $scope.confirmDelete = function () {
+      ngDialog.open({
+          template: 'views/deleteSyncDataConfirm.html',
+          class: 'ngdialog-theme-default',
+          closeByEscape: true,
+          closeByDocument: false,
+          showClose: true,
+          scope: $scope
+
+      });
+    };
+
+    $scope.cancelDialog = function () {
+      ngDialog.close();
+    }
         
       $scope.sync = function () {
+
+        ngDialog.close();
         let selectedAddresses = angular.copy($scope.addressesToFilter);
         let filters = [];
         let results = new Object();
