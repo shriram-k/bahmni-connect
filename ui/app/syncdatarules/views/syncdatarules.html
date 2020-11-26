@@ -50,7 +50,7 @@
     
       </br>
       <div>
-          <button class="btn offline-sync fl" ng-click="sync()" ng-show="isOfflineApp && !isSyncing ">
+          <button id="dialog" class="btn offline-sync fl" ng-click="processAddressFilters()" ng-show="isOfflineApp && !isSyncing ">
             Sync
         </button>
         <button class="btn offline-sync fl offline-sync-image" ng-show="isOfflineApp && isSyncing" disabled>

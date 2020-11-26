@@ -115,6 +115,16 @@ li:hover {
   color: white;
 }
 
+
+.delete-confirm-dialog{
+  margin: 5px;
+  padding: 5px
+}
+
+.dialog-msg{
+  margin: 2px
+}
+
 .selected-items-container{
   max-width: 600px;
 }
@@ -166,5 +176,25 @@ li:hover {
 .syncStatusInfo p {
   padding-bottom: 10px;
   margin: 0;
+}
+
+.delete-confirm-dialog{
+  margin: 5px;
+  padding: 5px
+}
+
+.dialog-msg{
+  margin: 2px
+}
+
+.dialog-buttons-table {
+  width: 100%;
+  table-layout: fixed;
+  background-color: #f0f0f0;
+}
+
+.dialog-buttons-table td {
+  background-color: #f0f0f0;
+  padding: 0;
 }
 
