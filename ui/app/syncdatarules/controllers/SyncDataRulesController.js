@@ -214,50 +214,77 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             });
         };
 
-        $scope.sync = function () {
-            let selectedAddresses = angular.copy($scope.addressesToFilter);
-            let filters = "";
-            for (let key in selectedAddresses) {
-                selectedAddresses[key] = selectedAddresses[key].filter(level => level.selected);
-                if (selectedLevelLength(selectedAddresses, key) != 0 && key.includes('0')) {
-                    filters += getSelectedLevelNames(selectedAddresses[key]);
-                    $scope.state.showValidationError = false;
-                } else if (selectedLevelLength(selectedAddresses, key) != 0 && !key.includes('0')) {
-                    filters += "-" + getSelectedLevelNames(selectedAddresses[key]);
-                } else {
-                    if (key.includes('0')) {
-                        $scope.state.showValidationError = true;
-                    }
-                }
-            }
-        // Override Marker.filters
-            [1, 2]; // A-B-C [A-B-C,A_B_C]
-            if (!$scope.state.showValidationError && $scope.state.sync_stratergy === "selective") {
-                let categories = offlineService.getItem("eventLogCategories");
-                _.forEach(categories, function (category) {
-                    if (category === "patient" || category === "encounter") {
-                        offlineDbService.getMarker(category).then(function (marker) {
-                            let tempMarkers = [];
-                            tempMarkers.push(filters);
-                // _.forEach(marker.filters, function (markerEntry) {
-                //   let filter = markerEntry.split("-")[0];
-                //   filter = filter + "-" + filters;
-                //   tempMarkers.push(filter);
-                // });
-                            offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, tempMarkers);
-                        });
-                    }
-                });
-          // logic to go to offlineSync service sync()
-                schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
+        var getParentName = function(parentObject,names){
+            if(parentObject != null)
+            {
+              names.push(parentObject.name);
+              getParentName(parentObject.parent,names);
             }
         };
+        
+      $scope.sync = function () {
+        let selectedAddresses = angular.copy($scope.addressesToFilter);
+        let filters = [];
+        let results = new Object();
+
+        for (let key in selectedAddresses) {
+          let temp = selectedAddresses[key].filter(level => level.selected);
+          if (temp.length != 0 && key.includes('0')) {
+            $scope.state.showValidationError = false;
+          }
+          else if (temp.length == 0 && key.includes('0')) {
+            $scope.state.showValidationError = true;
+          }
+
+          if (temp.length != 0)
+            results = temp;
+        }
+
+        if (!$scope.state.showValidationError) {
+          let counter = 0;
+          for (let newKey in results) {
+            offlineDbService.getAddressesHeirarchyLevelsById(results[newKey].levelId).then(function (result) {
+              var params = { searchString: results[newKey].name, addressField: result[0].addressField, parentUuid: null, limit: 100, strategy: 'SelectiveSync' };
+              offlineDbService.searchAddress(params).then(function (result) {
+                counter++;
+                let names = [];
+                let data = result.data[0];
+                names.push(data.name);
+                getParentName(data.parent, names);
+                let string = "";
+                for (let key in names.reverse()) {
+                  if (key == 0) {
+                    string += names[key];
+                  }
+                  else {
+                    string = string + '-' + names[key];
+                  }
+                }
+                filters.push(string);
+              }).then(function () {
+                if (counter === results.length) {
+                  let categories = offlineService.getItem("eventLogCategories");
+                  _.forEach(categories, function (category) {
+                    if (category === "patient" || category === "encounter") {
+                      offlineDbService.getMarker(category).then(function (marker) {
+                        offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, filters);
+                      });
+                    }
+                  });
+                  schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
+                }
+              });
+            });
+          }
+        }
+
+      };
 
         $scope.populateList = function () {
             offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {
                 levels.forEach(function (level, index) {
                     offlineDbService.getAllAddressesByLevelId(level.addressHierarchyLevelId).then(function (address) {
-            // $scope.addresses[`level_${index}`] = address;
+                        // $scope.addresses[`level_${index}`] = address;
                         $scope.addresses[`${level.name}_${index}`] = address.sort(function (a, b) {
                             return a.name.localeCompare(b.name);
                         });
