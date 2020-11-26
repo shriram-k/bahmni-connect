@@ -115,3 +115,25 @@ li:hover {
   color: white;
 }
 
+.delete-confirm-dialog{
+  margin: 5px;
+  padding: 5px
+}
+
+.dialog-msg{
+  margin: 2px
+}
+
+.dialog-buttons{
+  width: fit-content;
+  margin-top: 25px;
+  margin-right: 5px;
+}
+
+.primary-button{
+  margin-left: 110px;
+}
+
+.secondary-button{
+  margin-left: 5px;
+}

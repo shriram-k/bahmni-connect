@@ -1,9 +1,8 @@
 "use strict";
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
-  "$scope",
-  "offlineDbService","offlineService",'schedulerService',
-  function ($scope, offlineDbService,offlineService,schedulerService) {
+  "$scope","offlineDbService","offlineService",'schedulerService', "ngDialog",
+  function ($scope, offlineDbService,offlineService,schedulerService,ngDialog) {
 
     $('.selected-items-box').unbind('click').bind('click', function(e) {
 
@@ -106,10 +105,35 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       if( val == 'N') $scope.state.showValidationError = false;
     };
 
+    //check if table has data then only show popup.
+
+    $scope.confirmDelete = function () {
+      ngDialog.open({
+          template: 'views/deleteSyncDataConfirm.html',
+          class: 'ngdialog-theme-default',
+          closeByEscape: true,
+          closeByDocument: false,
+          showClose: true,
+          scope: $scope
+
+      });
+    };
+
+    $scope.cancelDialog = function () {
+      ngDialog.close();
+    }
+
     $scope.sync = function(){
+
+      ngDialog.close();
+
       if($scope.state.sync_stratergy == "selective" && $scope.selectedProvinceNames().length === 0){
         $scope.state.showValidationError = true;
       }else{
+
+        offlineDbService.deleteRecordsFromTable('patient');
+        offlineDbService.deleteRecordsFromTable('encounter');
+
         var config = { "strategy": $scope.state.sync_stratergy, "Province": $scope.selectedProvinceNames(), "District": $scope.selectedDistrictNames(), "Facility": $scope.selectedFacilityNames() };
         var filters = config.Province + (config.District.length !=0 ? ("-" +  config.District) : "") + (config.Facility.length !=0 ? ("-" + config.Facility) : "");
         console.log('Filters' , filters);
