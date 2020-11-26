@@ -58,6 +58,9 @@ angular.module('bahmni.common.offline')
 
             for (var i in addressFields) {
                 if (addressFields[i] === params.addressField) {
+                    if(params.strategy && params.strategy == 'SelectiveSync')
+                    addressHierarchyField = addressFields[i];
+                    else
                     addressHierarchyField = i;
                 }
             }
@@ -96,8 +99,8 @@ angular.module('bahmni.common.offline')
                             .from(addressHierarchyEntryTable)
                             .where(lf.op.and(
                                 addressHierarchyEntryTable.levelId.eq(level.addressHierarchyLevelId),
-                                addressHierarchyEntryTable.name.match(new RegExp(params.searchString, 'i')
-                                )))
+                                params.strategy != 'SelectiveSync' ? addressHierarchyEntryTable.name.match(new RegExp(params.searchString, 'i')) : addressHierarchyEntryTable.name.eq(params.searchString)
+                                ))
                             .limit(params.limit).exec()
                             .then(
                                 function (result) {
@@ -164,8 +167,21 @@ angular.module('bahmni.common.offline')
 
         var getAddressesHeirarchyLevels = function () {
             var addressHierarchyLevelTable = db.getSchema().table('address_hierarchy_level');
-            return db.select(addressHierarchyLevelTable.addressHierarchyLevelId)
+            return db.select()
                 .from(addressHierarchyLevelTable)
+                .orderBy(addressHierarchyLevelTable.addressHierarchyLevelId)
+                .exec()
+                .then(function (result) {
+                    return result;
+                });
+        };
+
+        var getAddressesHeirarchyLevelsById = function (levelId) {
+            var addressHierarchyLevelTable = db.getSchema().table('address_hierarchy_level');
+            return db.select()
+                .from(addressHierarchyLevelTable)
+                .where(addressHierarchyLevelTable.addressHierarchyLevelId.eq(levelId))
+                .orderBy(addressHierarchyLevelTable.addressHierarchyLevelId)
                 .exec()
                 .then(function (result) {
                     return result;
@@ -179,6 +195,7 @@ angular.module('bahmni.common.offline')
             search: search,
             getParentAddressById: getParentAddressById,
             getParentAddressByLevelId: getParentAddressByLevelId,
-            getAddressesHeirarchyLevels: getAddressesHeirarchyLevels
+            getAddressesHeirarchyLevels: getAddressesHeirarchyLevels,
+            getAddressesHeirarchyLevelsById: getAddressesHeirarchyLevelsById
         };
     }]);

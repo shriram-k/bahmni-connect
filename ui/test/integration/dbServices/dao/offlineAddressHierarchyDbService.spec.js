@@ -164,10 +164,12 @@ describe('offlineAddressHierarchyDbService', function () {
                   .getAddressesHeirarchyLevels()
                   .then(function (result) {
                     //  console.log("A: " + result.length + "  " + JSON.stringify(result[0].addressHierarchyLevelId) + " " + JSON.stringify(result[1].addressHierarchyLevelId));
-                  expect(result.length).toBe(4);
-                  expect(result[0].addressHierarchyLevelId).toBe(3);
-                  expect(result[1].addressHierarchyLevelId).toBe(2);
-                  done();
+                    expect(result.length).toBe(4);
+                    expect(result[0].addressHierarchyLevelId).toBe(2);
+                    expect(result[1].addressHierarchyLevelId).toBe(3);
+                    expect(result[0].name).toBe('Zilla');
+                    expect(result[1].name).toBe('Province');
+                    done();
                   });
             });
         });    

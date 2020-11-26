@@ -194,6 +194,9 @@ angular.module('bahmni.common.offline')
                 return offlineAddressHierarchyDbService.getAddressesHeirarchyLevels();
             };
 
+            var getAddressesHeirarchyLevelsById = function (levelId) {
+                return offlineAddressHierarchyDbService.getAddressesHeirarchyLevelsById(levelId);
+            };
             var getConfig = function (module) {
                 return offlineConfigDbService.getConfig(module);
             };
@@ -406,6 +409,7 @@ angular.module('bahmni.common.offline')
                 getPatientsCount: getPatientsCount,
                 getAllAddressesByLevelId: getAllAddressesByLevelId,
                 getAddressesHeirarchyLevels: getAddressesHeirarchyLevels,
-                deleteRecordsFromTable: deleteRecordsFromTable
+                deleteRecordsFromTable: deleteRecordsFromTable,
+                getAddressesHeirarchyLevelsById: getAddressesHeirarchyLevelsById
             };
         }]);
