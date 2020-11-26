@@ -58,9 +58,6 @@ angular.module('bahmni.common.offline')
 
             for (var i in addressFields) {
                 if (addressFields[i] === params.addressField) {
-                    if(params.strategy && params.strategy == 'SelectiveSync')
-                    addressHierarchyField = i;
-                    else
                     addressHierarchyField = i;
                 }
             }
