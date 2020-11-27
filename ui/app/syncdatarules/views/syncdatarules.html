@@ -14,7 +14,7 @@
     <form>
 
       <div class="mb20" ng-repeat="(key, value) in addressesToFilter">
-        <div class="grid-item " id="{{key.split('_')[1]}}-block" ng-show="display(key.split('_')[1]) && isParentSelected(key)"><h3> {{key.split('_')[0]}}:</h3>
+        <div class="grid-item " id="{{getLevel(key)}}-block" ng-show="display(getLevel(key)) && isParentSelected(key)"><h3> {{getLevelName(key)}}:</h3>
           <br/>
           <div class="selected-items-container">
             <ul class="selected-list" >
@@ -25,14 +25,14 @@
             </ul>
           </div>
           <div class="dropdown grid-item">
-            <div class="selected-items-box" ng-click="openDropDown(key)" id="{{key.split('_')[0]}}-select" >
+            <div class="selected-items-box" ng-click="openDropDown(key)" id="{{getLevelName(key).replaceAll(' ', '-')}}-select" >
               <ul class="selected-list" >
-                <li class="default-option">--- Select {{key.split('_')[0]}} ---<i
-                    class="fa fa-caret-down pull-right"></i></li>
+                <li class="default-option">--- Select {{getLevelName(key)}} ---
+                  <i class="fa fa-caret-down pull-right"></i></li>
               </ul>
             </div>
             
-            <div class="{{key.split('_')[0]}}-list list">
+            <div class="{{getLevelName(key).replaceAll(' ', '-')}}-list list">
               <ul class="items-list">
                 <li ng-repeat="address in value">
                   <input type="checkbox" ng-model="address.selected" id={{address.name}} ng-change="filterLevels(key)"  />
@@ -44,7 +44,7 @@
         </div>
       </div>
 
-      <p class="validation-error" ng-show="state.showValidationError">{{state.validationError}}</p>
+      <p class="validation-error" ng-show="state.showValidationError">{{validationError()}}</p>
     
       </br>
       <div>

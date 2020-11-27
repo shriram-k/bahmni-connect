@@ -14,10 +14,13 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
         $scope.state = {
             sync_stratergy: "selective",
-            validationError: "** Please Select Province **",
             showValidationError: false,
             isDataAvailable: false
         };
+
+        $scope.validationError = function(levelKey){
+            return `** Please Select Atleast One Filter**`;
+        } 
 
         $scope.selecteLevelNames = function (level) {
             if ($scope.addressesToFilter.hasOwnProperty(level)) {
@@ -28,12 +31,14 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         };
 
         $scope.getLevel = function (levelKey) {
-            return levelKey.split("_")[1];
+          let levelKeysSplitArray = levelKey.split("_");
+          return levelKeysSplitArray[levelKeysSplitArray.length - 1];
         };
-
+    
         $scope.getLevelName = function (levelKey) {
-            return levelKey.split("_")[0];
+          return levelKey.slice(0, -2);
         };
+    
 
         $scope.filterLevels = function (level) {
             let levelIndex = $scope.getLevel(level);
@@ -42,7 +47,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             var selectedParentIds = $scope.addressesToFilter[level].filter(province => province.selected).map(province => province.id);
             var indexToMatch = parseInt(levelIndex) + 1;
             for (let key in $scope.addressesToFilter) {
-                if (key.includes(indexToMatch)) {
+                if ($scope.getLevel(key) == indexToMatch) {
                     let tempAddresses = angular.copy($scope.addresses);
                     $scope.addressesToFilter[key] = tempAddresses[key].filter(levelToFilter => selectedParentIds.includes(levelToFilter.parentId));
                     indexToMatch = indexToMatch + 1;
@@ -83,7 +88,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         };
 
         $scope.openDropDown = function (dropDownId) {
-            let targetClass = '.' + $scope.getLevelName(dropDownId) + '-list';
+            let targetClass = '.' + $scope.getLevelName(dropDownId).replaceAll(' ', '-') + '-list';
             $(targetClass).slideToggle('fast');
         };
 
