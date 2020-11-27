@@ -131,11 +131,11 @@ li:hover {
 }
 
 .primary-button{
-  margin-left: 110px;
+  margin-left: 5px;
 }
 
 .secondary-button{
-  margin-left: 5px;
+  margin-left: 110px;
 }
 .selected-items-container{
   max-width: 600px;
