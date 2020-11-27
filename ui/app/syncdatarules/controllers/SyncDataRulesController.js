@@ -227,18 +227,22 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             }
         };
 
+        $scope.confirmDelete = function () {
+            offlineDbService.getPatientsCount().then(function (count) {
+                count > 0 ? ngDialog.open({
+                    template: 'views/deleteSyncDataConfirm.html',
+                    class: 'ngdialog-theme-default',
+                    closeByEscape: true,
+                    closeByDocument: false,
+                    showClose: true,
+                    scope: $scope
+                }) : $scope.sync();
+            });
+        };
 
-    $scope.confirmDelete = function () {
-      ngDialog.open({
-          template: 'views/deleteSyncDataConfirm.html',
-          class: 'ngdialog-theme-default',
-          closeByEscape: true,
-          closeByDocument: false,
-          showClose: true,
-          scope: $scope
-
-      });
-    };
+        $scope.cancelDialog = function () {
+          ngDialog.close();
+        }
 
     $scope.cancelDialog = function () {
       ngDialog.close();
