@@ -56,12 +56,12 @@ angular.module('bahmni.common.offline')
             var addressHierarchyField;
             var level;
 
-            for (var i in addressFields) {
-                if (addressFields[i] === params.addressField) {
+            for (var addressField in addressFields) {
+                if (addressField === params.addressField) {
                     if(params.strategy && params.strategy == 'SelectiveSync')
-                    addressHierarchyField = addressFields[i];
+                    addressHierarchyField = addressField;
                     else
-                    addressHierarchyField = i;
+                    addressHierarchyField = addressField;
                 }
             }
             return db.select()
