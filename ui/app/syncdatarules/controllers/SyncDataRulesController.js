@@ -249,7 +249,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           let counter = 0;
           for (let newKey in results) {
             offlineDbService.getAddressesHeirarchyLevelsById(results[newKey].levelId).then(function (result) {
-              var params = { searchString: results[newKey].name, addressField: result[0].addressField, parentUuid: null, limit: 100, strategy: 'SelectiveSync' };
+              let addressFields = Bahmni.Common.Offline.AddressFields;
+              var params = { searchString: results[newKey].name, addressField: addressFields[result[0].addressField], parentUuid: null, limit: 100, strategy: 'SelectiveSync' };
               offlineDbService.searchAddress(params).then(function (result) {
                 counter++;
                 let names = [];
