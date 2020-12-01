@@ -302,7 +302,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                   });
 
                 var saveFilterConfig =  $window.localStorage.getItem('SyncFilterConfig');
-                if(saveFilterConfig !== filters){
+                
+                if(saveFilterConfig !== filters.toString()){
                   offlineDbService.deleteRecordsFromTable('patient');
                   offlineDbService.deleteRecordsFromTable('encounter');
                 }
