@@ -1,8 +1,8 @@
 "use strict";
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
-    "$scope", "offlineDbService", "offlineService", 'schedulerService', 'eventQueue', 'spinner', "$q", "ngDialog",
-    function ($scope, offlineDbService, offlineService, schedulerService, eventQueue, spinner, $q, ngDialog) {
+    "$scope", "offlineDbService", "offlineService", 'schedulerService', 'eventQueue', 'spinner', "$q", "ngDialog",'$window',
+    function ($scope, offlineDbService, offlineService, schedulerService, eventQueue, spinner, $q, ngDialog, $window) {
         $scope.isOfflineApp = offlineService.isOfflineApp();
 
         var init = function () {
@@ -303,7 +303,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                   });
 
                 var saveFilterConfig =  $window.localStorage.getItem('SyncFilterConfig');
-                if(saveFilterConfig !== SyncFilterConfig){
+                
+                if(saveFilterConfig !== filters.toString()){
                   offlineDbService.deleteRecordsFromTable('patient');
                   offlineDbService.deleteRecordsFromTable('encounter');
                 }
