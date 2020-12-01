@@ -290,6 +290,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                   }
                 }
                 filters.push(string);
+                $window.localStorage.setItem('SyncFilterConfig', filters);
               }).then(function () {
                 if (counter === results.length) {
                   let categories = offlineService.getItem("eventLogCategories");
@@ -300,8 +301,12 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                       });
                     }
                   });
+
+                var saveFilterConfig =  $window.localStorage.getItem('SyncFilterConfig');
+                if(saveFilterConfig !== SyncFilterConfig){
                   offlineDbService.deleteRecordsFromTable('patient');
                   offlineDbService.deleteRecordsFromTable('encounter');
+                }
                   schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
                 }
               });
