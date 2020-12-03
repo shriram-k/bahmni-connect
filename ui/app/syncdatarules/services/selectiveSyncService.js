@@ -69,7 +69,7 @@ angular.module('syncdatarules')
                         }
 
                     });
-
+                if (deletePatientAndEncounters) {
                     multiStageWorker.addStage(
                         {
                             execute: function () {
@@ -97,6 +97,8 @@ angular.module('syncdatarules')
                             }
 
                         });
+                }
+
                 multiStageWorker.addStage(
                     {
                         execute: function () {

@@ -125,20 +125,6 @@ li:hover {
   margin: 2px
 }
 
-.dialog-buttons{
-  width: fit-content;
-  margin-top: 25px;
-  margin-right: 5px;
-}
-
-.primary-button{
-  margin-left: 5px;
-}
-
-.secondary-button{
-  margin-left: 110px;
-}
-
 .selected-items-container{
   max-width: 600px;
 }
@@ -201,17 +187,14 @@ li:hover {
   margin: 2px
 }
 
-.dialog-buttons{
-  width: fit-content;
-  margin-top: 25px;
-  margin-right: 5px;
+.dialog-buttons-table {
+  width: 100%;
+  table-layout: fixed;
+  background-color: #f0f0f0;
 }
 
-.primary-button{
-  margin-left: 110px;
-}
-
-.secondary-button{
-  margin-left: 5px;
+.dialog-buttons-table td {
+  background-color: #f0f0f0;
+  padding: 0;
 }
 
