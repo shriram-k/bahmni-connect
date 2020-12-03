@@ -27,7 +27,9 @@
           <div class="dropdown grid-item">
             <div class="selected-items-box" ng-click="openDropDown(key)" id="{{getLevelName(key).replaceAll(' ', '-')}}-select" >
               <ul class="selected-list" >
-                <li class="default-option">--- Select {{getLevelName(key)}} ---
+                <li class="default-option" ng-show="value.length != 0">--- Select {{getLevelName(key)}} ---
+                  <i class="fa fa-caret-down pull-right"></i></li>
+                <li class="default-option" ng-show="value.length == 0">--- No {{getLevelName(key)}} ---
                   <i class="fa fa-caret-down pull-right"></i></li>
               </ul>
             </div>

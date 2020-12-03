@@ -57,13 +57,17 @@ angular.module('bahmni.common.offline')
             var level;
 
             for (var i in addressFields) {
-                if (addressFields[i] === params.addressField) {
-                    if(params.strategy && params.strategy == 'SelectiveSync')
-                    addressHierarchyField = i;
-                    else
-                    addressHierarchyField = i;
+                if (params.strategy && params.strategy == 'SelectiveSync') {
+                    if (i === params.addressField) {
+                        addressHierarchyField = i;
+                    }
                 }
-            }
+                    else {
+                        if (addressFields[i] === params.addressField) {
+                            addressHierarchyField = i;
+                        }
+                    }
+                }
             return db.select()
                 .from(addressHierarchyLevelTable)
                 .where(addressHierarchyLevelTable.addressField.eq(addressHierarchyField)).exec()
