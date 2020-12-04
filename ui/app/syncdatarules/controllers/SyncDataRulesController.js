@@ -287,25 +287,23 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             })
 
             $q.all(promises).then(function (result){
-                showDialog(result)
+                $scope.selectedFilters = result;
+                showDialog();
             })
         };
 
-        var showDialog = function(filters) {
-            if (!$window.localStorage.getItem('SyncFilterConfig')) {
-                $window.localStorage.setItem('SyncFilterConfig', filters);
-            }
+        var showDialog = function() {
             let categories = offlineService.getItem("eventLogCategories");
             _.forEach(categories, function (category) {
                 if (category === "patient" || category === "encounter") {
                     offlineDbService.getMarker(category).then(function (marker) {
-                        offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, filters);
+                        offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, $scope.selectedFilters);
                     });
                 }
             });
             var saveFilterConfig = $window.localStorage.getItem('SyncFilterConfig');
-            $scope.deletePatientAndEncounter = (saveFilterConfig !== filters.toString());
-            $window.localStorage.setItem('SyncFilterConfig', filters);
+            $scope.deletePatientAndEncounter = (saveFilterConfig !== $scope.selectedFilters.toString());
+            $window.localStorage.setItem('SyncFilterConfig', $scope.selectedFilters);
             ($scope.deletePatientAndEncounter) ? ngDialog.open({
                 template: 'views/deleteSyncDataConfirm.html',
                 class: 'ngdialog-theme-default',
@@ -314,10 +312,13 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                 showClose: true,
                 scope: $scope
             }) : $scope.startSync($scope.deletePatientAndEncounter);
-        }
+        };
 
         $scope.startSync = function () {
-            ngDialog.close();            
+            ngDialog.close();
+            if (!$window.localStorage.getItem('SyncFilterConfig')) {
+                $window.localStorage.setItem('SyncFilterConfig', $scope.selectedFilters);
+            }         
             selectiveSchedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration, $scope.deletePatientAndEncounter);
         }
 
@@ -330,10 +331,15 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                             return a.name.localeCompare(b.name);
                         });
                         $scope.addressesToFilter[`${level.name}_${index}`] = address;
+                        updateSelectedItems();
                         $('#loadData').click();
                     });
                 });
             });
+        };
+
+        var updateSelectedItems = function () {
+            var saveFilterConfig = $window.localStorage.getItem('SyncFilterConfig');
         };
 
         return spinner.forPromise($q.all(init()));
