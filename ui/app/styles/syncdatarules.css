@@ -193,8 +193,14 @@ li:hover {
   background-color: #f0f0f0;
 }
 
-.dialog-buttons-table td {
-  background-color: #f0f0f0;
-  padding: 0;
+.buttons-block{
+  margin-block-start: 5%;
 }
 
+.primary-button {
+  margin-inline-start: 3%;
+}
+
+.secondary-button {
+  margin-inline-start: 30%;
+}
