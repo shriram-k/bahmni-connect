@@ -57,10 +57,17 @@ angular.module('bahmni.common.offline')
             var level;
 
             for (var i in addressFields) {
-                if (addressFields[i] === params.addressField) {
-                    addressHierarchyField = i;
+                if (params.strategy && params.strategy == 'SelectiveSync') {
+                    if (i === params.addressField) {
+                        addressHierarchyField = i;
+                    }
                 }
-            }
+                    else {
+                        if (addressFields[i] === params.addressField) {
+                            addressHierarchyField = i;
+                        }
+                    }
+                }
             return db.select()
                 .from(addressHierarchyLevelTable)
                 .where(addressHierarchyLevelTable.addressField.eq(addressHierarchyField)).exec()
@@ -96,8 +103,8 @@ angular.module('bahmni.common.offline')
                             .from(addressHierarchyEntryTable)
                             .where(lf.op.and(
                                 addressHierarchyEntryTable.levelId.eq(level.addressHierarchyLevelId),
-                                addressHierarchyEntryTable.name.match(new RegExp(params.searchString, 'i')
-                                )))
+                                params.strategy != 'SelectiveSync' ? addressHierarchyEntryTable.name.match(new RegExp(params.searchString, 'i')) : addressHierarchyEntryTable.name.eq(params.searchString)
+                                ))
                             .limit(params.limit).exec()
                             .then(
                                 function (result) {
@@ -151,10 +158,48 @@ angular.module('bahmni.common.offline')
                 });
         };
 
+        var getParentAddressByLevelId = function (id) {
+            var addressHierarchyEntryTable = db.getSchema().table('address_hierarchy_entry');
+            return db.select()
+                .from(addressHierarchyEntryTable)
+                .where(addressHierarchyEntryTable.levelId.eq(id))
+                .exec()
+                .then(function (result) {
+                    return result;
+                });
+        };
+
+        var getAddressesHeirarchyLevels = function () {
+            var addressHierarchyLevelTable = db.getSchema().table('address_hierarchy_level');
+            return db.select()
+                .from(addressHierarchyLevelTable)
+                .orderBy(addressHierarchyLevelTable.addressHierarchyLevelId)
+                .exec()
+                .then(function (result) {
+                    return result;
+                });
+        };
+
+        var getAddressesHeirarchyLevelsById = function (levelId) {
+            var addressHierarchyLevelTable = db.getSchema().table('address_hierarchy_level');
+            return db.select()
+                .from(addressHierarchyLevelTable)
+                .where(addressHierarchyLevelTable.addressHierarchyLevelId.eq(levelId))
+                .orderBy(addressHierarchyLevelTable.addressHierarchyLevelId)
+                .exec()
+                .then(function (result) {
+                    return result;
+                });
+        };
+
         return {
             init: init,
             insertAddressHierarchy: insertAddressHierarchy,
+            insertAddressHierarchyLevel: insertAddressHierarchyLevel,
             search: search,
-            getParentAddressById: getParentAddressById
+            getParentAddressById: getParentAddressById,
+            getParentAddressByLevelId: getParentAddressByLevelId,
+            getAddressesHeirarchyLevels: getAddressesHeirarchyLevels,
+            getAddressesHeirarchyLevelsById: getAddressesHeirarchyLevelsById
         };
     }]);
