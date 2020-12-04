@@ -100,6 +100,13 @@ describe("SyncDataRulesController", function () {
     });
   });
 
+  describe("updateSelectedItems", function () {
+    it("should return list of selected level names", function () {
+      scopeMock.selectedFilters = "Maharastra";
+      expect(scopeMock.updateSelectedItems("Level_1_0")[0].selected).toBe(true);
+    });
+  });
+
   describe("$scope.filterLevels", function () {
     it("should add items to level data based on selected items in the previous level", function () {
       // spyOn( scopeMock, 'getLevel').and.returnValue(0);
