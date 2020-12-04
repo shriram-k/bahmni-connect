@@ -1,12 +1,11 @@
 "use strict";
 
 angular.module("syncdatarules").controller("SyncDataRulesController", [
-    "$scope", "offlineDbService", "offlineService", 'schedulerService', 'eventQueue', 'spinner', "$q",
-    function ($scope, offlineDbService, offlineService, schedulerService, eventQueue, spinner, $q) {
+    "$scope", "offlineDbService", "offlineService", 'selectiveSchedulerService', 'eventQueue', 'spinner', "$q", "ngDialog", '$window',
+    function ($scope, offlineDbService, offlineService, selectiveSchedulerService, eventQueue, spinner, $q, ngDialog, $window) {
         $scope.isOfflineApp = offlineService.isOfflineApp();
 
         var init = function () {
-            console.log("in sync data rules init: ", $scope.isOfflineApp);
             if ($scope.isOfflineApp) {
                 setWatchersForErrorStatus();
             }
@@ -18,27 +17,27 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             isDataAvailable: false
         };
 
-        $scope.validationError = function(levelKey){
+        $scope.validationError = function (levelKey) {
             return `** Please Select Atleast One Filter**`;
-        } 
+        }
 
         $scope.selecteLevelNames = function (level) {
             if ($scope.addressesToFilter.hasOwnProperty(level)) {
                 return $scope.addressesToFilter[level].filter(
-          address => address.selected
-        ).map(prov => prov.name);
+                    address => address.selected
+                ).map(prov => prov.name);
             }
         };
 
         $scope.getLevel = function (levelKey) {
-          let levelKeysSplitArray = levelKey.split("_");
-          return levelKeysSplitArray[levelKeysSplitArray.length - 1];
+            let levelKeysSplitArray = levelKey.split("_");
+            return levelKeysSplitArray[levelKeysSplitArray.length - 1];
         };
-    
+
         $scope.getLevelName = function (levelKey) {
-          return levelKey.slice(0, -2);
+            return levelKey.slice(0, -2);
         };
-    
+
 
         $scope.filterLevels = function (level) {
             let levelIndex = $scope.getLevel(level);
@@ -151,8 +150,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         var cleanUpListenerSchedulerStage = $scope.$on("schedulerStage", function (event, stage, restartSync) {
             $scope.isSyncing = (stage !== null);
             if (restartSync) {
-                schedulerService.stopSync();
-                schedulerService.sync();
+                selectiveSchedulerService.stopSync();
+                selectiveSchedulerService.sync();
             }
         });
 
@@ -219,71 +218,108 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             });
         };
 
-        var getParentName = function(parentObject,names){
-            if(parentObject != null)
-            {
-              names.push(parentObject.name);
-              getParentName(parentObject.parent,names);
+        var getParentName = function (parentObject, names) {
+            if (parentObject != null) {
+                names.push(parentObject.name);
+                getParentName(parentObject.parent, names);
             }
         };
-        
-      $scope.sync = function () {
-        let selectedAddresses = angular.copy($scope.addressesToFilter);
-        let filters = [];
-        let results = new Object();
 
-        for (let key in selectedAddresses) {
-          let temp = selectedAddresses[key].filter(level => level.selected);
-          if (temp.length != 0 && key.includes('0')) {
-            $scope.state.showValidationError = false;
-          }
-          else if (temp.length == 0 && key.includes('0')) {
-            $scope.state.showValidationError = true;
-          }
-
-          if (temp.length != 0)
-            results = temp;
+        $scope.cancelDialog = function () {
+            ngDialog.close();
         }
 
-        if (!$scope.state.showValidationError) {
-          let counter = 0;
-          for (let newKey in results) {
-            offlineDbService.getAddressesHeirarchyLevelsById(results[newKey].levelId).then(function (result) {
-              var params = { searchString: results[newKey].name, addressField: result[0].addressField, parentUuid: null, limit: 100, strategy: 'SelectiveSync' };
-              offlineDbService.searchAddress(params).then(function (result) {
-                counter++;
-                let names = [];
-                let data = result.data[0];
-                names.push(data.name);
-                getParentName(data.parent, names);
-                let string = "";
-                for (let key in names.reverse()) {
-                  if (key == 0) {
-                    string += names[key];
-                  }
-                  else {
-                    string = string + '-' + names[key];
-                  }
+        $scope.cancelDialog = function () {
+            ngDialog.close();
+        }
+
+        var getAddressesFromDocument = function () {
+            let selectedAddresses = angular.copy($scope.addressesToFilter);
+            var results = new Object();
+
+            for (let key in selectedAddresses) {
+                let temp = selectedAddresses[key].filter(level => level.selected);
+                if (temp.length != 0 && key.includes('0')) {
+                    $scope.state.showValidationError = false;
                 }
-                filters.push(string);
-              }).then(function () {
-                if (counter === results.length) {
-                  let categories = offlineService.getItem("eventLogCategories");
-                  _.forEach(categories, function (category) {
-                    if (category === "patient" || category === "encounter") {
-                      offlineDbService.getMarker(category).then(function (marker) {
+                else if (temp.length == 0 && key.includes('0')) {
+                    $scope.state.showValidationError = true;
+                }
+
+                if (temp.length != 0)
+                    results = temp;
+            }
+
+            return results;
+        }
+
+        $scope.processAddressFilters = async function () {
+            var promises = [];
+            var addresses = getAddressesFromDocument();
+
+            if ($scope.state.showValidationError) {
+                return;
+            }
+            addresses.forEach(function (address) {
+                var filters = offlineDbService.getAddressesHeirarchyLevelsById(address.levelId).then(function (result) {
+                    let addressFields = Bahmni.Common.Offline.AddressFields;
+                    var params = { searchString: address.name, addressField: addressFields[result[0].addressField], parentUuid: null, limit: 100, strategy: 'SelectiveSync' };
+                    
+                    var filterString = offlineDbService.searchAddress(params).then(function (result) {
+                        let names = [];
+                        let data = result.data[0];
+                        names.push(data.name);
+                        getParentName(data.parent, names);
+                        let string = "";
+                        for (let key in names.reverse()) {
+                            if (key == 0) {
+                                string += names[key];
+                            }
+                            else {
+                                string = string + '-' + names[key];
+                            }
+                        }
+                        return string;
+                    });
+                    return filterString;
+                });
+                promises.push(filters);
+            })
+
+            $q.all(promises).then(function (result){
+                showDialog(result)
+            })
+        };
+
+        var showDialog = function(filters) {
+            if (!$window.localStorage.getItem('SyncFilterConfig')) {
+                $window.localStorage.setItem('SyncFilterConfig', filters);
+            }
+            let categories = offlineService.getItem("eventLogCategories");
+            _.forEach(categories, function (category) {
+                if (category === "patient" || category === "encounter") {
+                    offlineDbService.getMarker(category).then(function (marker) {
                         offlineDbService.insertMarker(marker.markerName, marker.lastReadEventUuid, filters);
-                      });
-                    }
-                  });
-                  schedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration);
+                    });
                 }
-              });
             });
-          }
+            var saveFilterConfig = $window.localStorage.getItem('SyncFilterConfig');
+            $scope.deletePatientAndEncounter = (saveFilterConfig !== filters.toString());
+            $window.localStorage.setItem('SyncFilterConfig', filters);
+            ($scope.deletePatientAndEncounter) ? ngDialog.open({
+                template: 'views/deleteSyncDataConfirm.html',
+                class: 'ngdialog-theme-default',
+                closeByEscape: true,
+                closeByDocument: false,
+                showClose: true,
+                scope: $scope
+            }) : $scope.startSync($scope.deletePatientAndEncounter);
         }
 
-      };
+        $scope.startSync = function () {
+            ngDialog.close();            
+            selectiveSchedulerService.sync(Bahmni.Common.Constants.syncButtonConfiguration, $scope.deletePatientAndEncounter);
+        }
 
         $scope.populateList = function () {
             offlineDbService.getAddressesHeirarchyLevels().then(function (levels) {

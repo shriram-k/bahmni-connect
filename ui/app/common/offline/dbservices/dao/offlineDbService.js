@@ -38,6 +38,10 @@ angular.module('bahmni.common.offline')
                 return patientDbService.getPatientsCount(db);
             }
 
+            var getEncountersCount = function () {
+                return encounterDbService.getEncountersCount(db);
+            }
+
             var deletePatientData = function (uuid) {
                 var deferred = $q.defer();
                 var queries = [];
@@ -347,6 +351,21 @@ angular.module('bahmni.common.offline')
                 return formDbService.getAllForms();
             };
 
+            var deleteRecordsFromTable = function (table) {
+                switch (table) {
+                case 'patient' :
+                    patientDbService.deleteAllPatientRecords(db);
+                    break;
+                case 'encounter':
+                    encounterDbService.deleteAllEncounterRecords(db);
+                    break;
+                }
+            };
+
+            var clearLastEventUuidForMarker = function (markerName) {
+                return offlineMarkerDbService.clearLastEventUuid(db, markerName)
+            }
+
             return {
                 init: init,
                 initSchema: initSchema,
@@ -398,6 +417,9 @@ angular.module('bahmni.common.offline')
                 getPatientsCount: getPatientsCount,
                 getAllAddressesByLevelId: getAllAddressesByLevelId,
                 getAddressesHeirarchyLevels: getAddressesHeirarchyLevels,
-                getAddressesHeirarchyLevelsById: getAddressesHeirarchyLevelsById
+                getAddressesHeirarchyLevelsById: getAddressesHeirarchyLevelsById,
+                deleteRecordsFromTable: deleteRecordsFromTable,
+                getEncountersCount: getEncountersCount,
+                clearLastEventUuidForMarker: clearLastEventUuidForMarker
             };
         }]);
