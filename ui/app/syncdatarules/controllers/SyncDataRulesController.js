@@ -338,8 +338,10 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             });
         };
 
-        var updateSelectedItems = function () {
+        $scope.updateSelectedItems = function () {
             var saveFilterConfig = $window.localStorage.getItem('SyncFilterConfig');
+            
+
         };
 
         return spinner.forPromise($q.all(init()));
