@@ -220,7 +220,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
         var getParentName = function (parentObject, names) {
             if (parentObject != null) {
-                names.push(parentObject.name);
+                names.push(parentObject.userGeneratedId);
                 getParentName(parentObject.parent, names);
             }
         };
@@ -268,8 +268,8 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                     var filterString = offlineDbService.searchAddress(params).then(function (result) {
                         let names = [];
                         let data = result.data[0];
-                        names.push(data.name);
-                        getParentName(data.parent, names);
+                        names.push(data.userGeneratedId);
+                        //getParentName(data.parent, names);
                         let string = "";
                         for (let key in names.reverse()) {
                             if (key == 0) {

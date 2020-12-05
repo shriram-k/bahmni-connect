@@ -60,6 +60,7 @@ angular.module('bahmni.common.offline')
                 if (addressFields[i] === params.addressField) {
                     addressHierarchyField = i;
                 }
+            }
             return db.select()
                 .from(addressHierarchyLevelTable)
                 .where(addressHierarchyLevelTable.addressField.eq(addressHierarchyField)).exec()
