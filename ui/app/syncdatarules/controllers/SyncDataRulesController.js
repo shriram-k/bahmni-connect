@@ -94,11 +94,13 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         $scope.loadState = function () {
             $scope.state;
             $scope.addresses;
-            for (let key in $scope.addresses) {
+            $scope.addressesToFilter;
+            for (let key in $scope.addressesToFilter) {
                 let levelIndex = $scope.getLevel(key);
-                let idToHide = '#' + levelIndex + '-block';
-                if (levelIndex === '0') {
-                    $scope.idsToShow.push(idToHide);
+                let levelId = '#' + levelIndex + '-block';
+                if ($scope.addressesToFilter[key].filter(x => x.selected).length > 0) {
+                    $scope.idsToShow.push(levelId);
+                    $scope.filterLevels(key);
                 }
             }
         };
@@ -235,6 +237,15 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
 
         var getAddressesFromDocument = function () {
             let selectedAddresses = angular.copy($scope.addressesToFilter);
+            let  syncFilterConfigObject = {};
+            for (const property in selectedAddresses){ 
+                syncFilterConfigObject[property] = selectedAddresses[property].filter(address => address.selected).map(address => address.id);
+            }
+            $window.localStorage.setItem(
+                'syncFilterConfigObject', 
+                JSON.stringify(syncFilterConfigObject)
+            );
+
             var results = new Object();
 
             for (let key in selectedAddresses) {
@@ -331,17 +342,24 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                             return a.name.localeCompare(b.name);
                         });
                         $scope.addressesToFilter[`${level.name}_${index}`] = address;
-                        updateSelectedItems();
-                        $('#loadData').click();
+                        $scope.updateSelectedItems();
+                        $scope.loadState();
                     });
                 });
             });
         };
 
         $scope.updateSelectedItems = function () {
-            var saveFilterConfig = $window.localStorage.getItem('SyncFilterConfig');
-            
-
+            let syncFilterConfigObject = JSON.parse($window.localStorage.getItem('syncFilterConfigObject'));
+            if(syncFilterConfigObject !== null){
+                for (const key in $scope.addressesToFilter){
+                    $scope.addressesToFilter[key].forEach(element => {
+                        if(syncFilterConfigObject[key].includes(element.id)){
+                            element.selected = true
+                        }
+                    }
+                )}
+            };
         };
 
         return spinner.forPromise($q.all(init()));
