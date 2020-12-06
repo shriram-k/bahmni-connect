@@ -87,9 +87,13 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         };
 
         $scope.openDropDown = function (dropDownId) {
-            let targetClass = '.' + $scope.getLevelName(dropDownId).replaceAll(' ', '-') + '-list';
+            let targetClass = '.' + $scope.getLevelName(dropDownId).replace(/[^\w\s]/gi, '-').replaceAll(' ', '-') + '-list';
             $(targetClass).slideToggle('fast');
         };
+
+        $scope.replaceSpecialCharacters = function (key){
+            return $scope.getLevelName(key).replace(/[^\w\s]/gi, '-').replaceAll(' ', '-');
+        }
 
         $scope.loadState = function () {
             $scope.state;
