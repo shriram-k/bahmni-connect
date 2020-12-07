@@ -276,29 +276,37 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                 return;
             }
             addresses.forEach(function (address) {
-                var filters = offlineDbService.getAddressesHeirarchyLevelsById(address.levelId).then(function (result) {
-                    let addressFields = Bahmni.Common.Offline.AddressFields;
-                    var params = { searchString: address.name, addressField: addressFields[result[0].addressField], parentUuid: null, limit: 100, strategy: 'SelectiveSync' };
+                var filtersPromise = offlineDbService.getAddressesHeirarchyLevelsById(address.levelId)
+                // .then(function (result) {
+                //     // let addressFields = Bahmni.Common.Offline.AddressFields;
+                //     // var params = { 
+                //     //     searchString: address.name, 
+                //     //     addressField: addressFields[result[0].addressField], 
+                //     //     parentUuid: null, 
+                //     //     limit: 100, 
+                //     //     strategy: 'SelectiveSync' 
+                //     // };
                     
-                    var filterString = offlineDbService.searchAddress(params).then(function (result) {
-                        let names = [];
-                        let data = result.data[0];
-                        names.push(data.userGeneratedId);
-                        //getParentName(data.parent, names);
-                        let string = "";
-                        for (let key in names.reverse()) {
-                            if (key == 0) {
-                                string += names[key];
-                            }
-                            else {
-                                string = string + '-' + names[key];
-                            }
-                        }
-                        return string;
-                    });
-                    return filterString;
-                });
-                promises.push(filters);
+                //     // var filterString = offlineDbService.searchAddress(params).then(function (result) {
+                //     //     let names = [];
+                //     //     let data = result.data[0];
+                //     //     names.push(data.userGeneratedId);
+                //     //     //getParentName(data.parent, names);
+                //     //     let string = "";
+                //     //     for (let key in names.reverse()) {
+                //     //         if (key == 0) {
+                //     //             string += names[key];
+                //     //         }
+                //     //         else {
+                //     //             string = string + '-' + names[key];
+                //     //         }
+                //     //     }
+                //     //     return string;
+                //     // });
+                //     // return filterString;
+                    
+                // });
+                promises.push(filtersPromise);
             })
 
             $q.all(promises).then(function (result){
