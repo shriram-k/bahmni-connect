@@ -318,7 +318,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             });
             var saveFilterConfig = $window.localStorage.getItem('SyncFilterConfig');
             $scope.deletePatientAndEncounter = (saveFilterConfig !== $scope.selectedFilters.toString());
-            $window.localStorage.setItem('SyncFilterConfig', $scope.selectedFilters);
+            
             ($scope.deletePatientAndEncounter) ? ngDialog.open({
                 template: 'views/deleteSyncDataConfirm.html',
                 class: 'ngdialog-theme-default',
