@@ -298,11 +298,15 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           .filter((address) => address.selected)
           .map((address) => address.userGeneratedId);
       }
+      if (Object.values(syncFilterConfigObject).flat().length == 0){
+        $scope.state.showValidationError = true;
+      }else{
+        $scope.state.showValidationError = false;
+      }
       $window.localStorage.setItem(
         "syncFilterConfigObject",
         JSON.stringify(syncFilterConfigObject)
       );
-
      
     };
 
@@ -335,7 +339,11 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     };
 
     $scope.showDialog = function () {
+
       setFilterConfig();
+      if($scope.state.showValidationError){
+        return;
+      }
       
       let categories = offlineService.getItem("eventLogCategories");
 
