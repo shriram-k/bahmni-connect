@@ -311,7 +311,10 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     };
 
     var setFilterConfig = function () {
-      setSyncFilterConfigObject();  
+      setSyncFilterConfigObject();
+      if(!$window.localStorage.getItem("SyncFilterConfig")) {
+        $window.localStorage.setItem("SyncFilterConfig", JSON.stringify($scope.apiFilters));
+      }
       console.log("filter Input", $window.localStorage.getItem('syncFilterConfigObject'));
 
       let selectedFilters = Object.values(
