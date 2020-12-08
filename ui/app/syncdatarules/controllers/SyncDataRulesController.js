@@ -302,11 +302,12 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         $scope.state.showValidationError = true;
       }else{
         $scope.state.showValidationError = false;
+        $window.localStorage.setItem(
+            "syncFilterConfigObject",
+            JSON.stringify(syncFilterConfigObject)
+          );
       }
-      $window.localStorage.setItem(
-        "syncFilterConfigObject",
-        JSON.stringify(syncFilterConfigObject)
-      );
+      
      
     };
 
@@ -362,9 +363,14 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
       });
       
-      var saveFilterConfig = $window.localStorage.getItem("SyncFilterConfig");
-      $scope.changeSyncFilter =
-      JSON.parse(saveFilterConfig).toString() !== $scope.apiFilters.toString();
+      if($window.localStorage.getItem("SyncFilterConfig")){
+
+        $scope.changeSyncFilter =
+        JSON.parse($window.localStorage.getItem("SyncFilterConfig")).toString() !== $scope.apiFilters.toString();
+      }else{
+        $scope.changeSyncFilter = false;
+      }
+      
 
       $scope.changeSyncFilter
         ? ngDialog.open({
@@ -400,26 +406,24 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                   return a.name.localeCompare(b.name);
                 }
               );
-              $scope.addressesToFilter[`${level.name}_${index}`] = angular.copy(address);
-              $scope.updateSelectedItems();
+              $scope.addressesToFilter[`${level.name}_${index}`] = address;
+              $scope.updateSelectedItems(`${level.name}_${index}`);
               $scope.loadState();
             });
         });
       });
     };
 
-    $scope.updateSelectedItems = function () {
+    $scope.updateSelectedItems = function (level) {
       let syncFilterConfigObject = JSON.parse(
         $window.localStorage.getItem("syncFilterConfigObject")
       );
       if (syncFilterConfigObject !== null) {
-        for (const key in $scope.addressesToFilter) {
-          $scope.addressesToFilter[key].forEach((element) => {
-            if (syncFilterConfigObject[key].includes(element.userGeneratedId)) {
+          $scope.addressesToFilter[level].forEach((element) => {
+            if (syncFilterConfigObject[level].includes(element.userGeneratedId)) {
               element.selected = true;
             }
           });
-        }
       }
     };
 
