@@ -397,7 +397,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                   return a.name.localeCompare(b.name);
                 }
               );
-              $scope.addressesToFilter[`${level.name}_${index}`] = address;
+              $scope.addressesToFilter[`${level.name}_${index}`] = angular.copy(address);
               $scope.updateSelectedItems();
               $scope.loadState();
             });
