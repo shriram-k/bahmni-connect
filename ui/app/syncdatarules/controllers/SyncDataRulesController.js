@@ -342,7 +342,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
     };
 
     $scope.showDialog = function () {
-
+      JSON.parse("undefined").toString();
       setFilterConfig();
       if($scope.state.showValidationError){
         return;
