@@ -302,11 +302,11 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         $scope.state.showValidationError = true;
       }else{
         $scope.state.showValidationError = false;
-        $window.localStorage.setItem(
-            "syncFilterConfigObject",
-            JSON.stringify(syncFilterConfigObject)
-          );
       }
+      $window.localStorage.setItem(
+        "syncFilterConfigObject",
+        JSON.stringify(syncFilterConfigObject)
+      );
       
      
     };
@@ -316,8 +316,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
       if(!$window.localStorage.getItem("SyncFilterConfig")) {
         $window.localStorage.setItem("SyncFilterConfig", JSON.stringify($scope.apiFilters));
       }
-      console.log("filter Input", $window.localStorage.getItem('syncFilterConfigObject'));
-
+      
       let selectedFilters = Object.values(
         JSON.parse($window.localStorage.getItem('syncFilterConfigObject'))
       );
@@ -363,7 +362,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
       });
       
-      if($window.localStorage.getItem("SyncFilterConfig") != undefined){
+      if( $window.localStorage.getItem("SyncFilterConfig") && $window.localStorage.getItem("SyncFilterConfig") != "undefined"){
 
         $scope.changeSyncFilter =
         JSON.parse($window.localStorage.getItem("SyncFilterConfig")).toString() !== $scope.apiFilters.toString();
