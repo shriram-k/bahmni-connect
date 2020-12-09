@@ -37,8 +37,8 @@
             <div class="{{replaceSpecialCharacters(key)}}-list list">
               <ul class="items-list">
                 <li ng-repeat="address in value">
-                  <input type="checkbox" ng-model="address.selected" id={{address.name}} ng-change="filterLevels(key)"  />
-                  <label for={{address.name}}>{{address.name}}</label>
+                  <input type="checkbox" ng-model="address.selected" id={{address.name+key}} ng-click="filterLevels(key)"  />
+                  <label for={{address.name+key}}>{{address.name}}</label>
                 </li>
               </ul>
             </div>
