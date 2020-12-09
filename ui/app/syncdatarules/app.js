@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('syncdatarules', ['ui.router', 'bahmni.common.offline','bahmni.common.config','bahmni.common.i18n','bahmni.common.uiHelper',
-'bahmni.common.logging', 'ngDialog', 'httpErrorInterceptor','authentication','pascalprecht.translate', 'bahmni.common.routeErrorHandler'])
-  .config(['$urlRouterProvider', '$stateProvider', '$httpProvider',function ($urlRouterProvider, $stateProvider, $httpProvider) {
+angular.module('syncdatarules', ['ui.router','bahmni.common.appFramework','bahmni.common.offline','bahmni.common.config','bahmni.common.i18n','bahmni.common.uiHelper',
+'bahmni.common.logging', 'ngDialog', 'httpErrorInterceptor','authentication','pascalprecht.translate', 'bahmni.common.routeErrorHandler','ngCookies'])
+  .config(['$urlRouterProvider', '$stateProvider', '$bahmniTranslateProvider','$httpProvider',function ($urlRouterProvider, $stateProvider, $bahmniTranslateProvider, $httpProvider) {
     $httpProvider.defaults.headers.common['Disable-WWW-Authenticate'] = true;
     $urlRouterProvider.otherwise('/syncdatarules');
 
@@ -28,7 +28,7 @@ angular.module('syncdatarules', ['ui.router', 'bahmni.common.offline','bahmni.co
             }
         }
     });
-    //$bahmniTranslateProvider.init({app: 'home', shouldMerge: true});
+    $bahmniTranslateProvider.init({app: 'syncdatarules', shouldMerge: true});
   }])
   .run(['$rootScope', function ($rootScope) {
   }]);
