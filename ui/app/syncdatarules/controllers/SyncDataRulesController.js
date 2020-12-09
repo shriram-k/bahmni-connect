@@ -363,7 +363,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         }
       });
       
-      if($window.localStorage.getItem("SyncFilterConfig" != undefined)){
+      if($window.localStorage.getItem("SyncFilterConfig") != undefined){
 
         $scope.changeSyncFilter =
         JSON.parse($window.localStorage.getItem("SyncFilterConfig")).toString() !== $scope.apiFilters.toString();

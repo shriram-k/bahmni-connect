@@ -204,3 +204,122 @@ li:hover {
 .secondary-button {
   margin-inline-start: 30%;
 }
+
+/* line 177, bahmni-helper/_base.scss */
+table {
+  width: 100%;
+}
+/* line 180, bahmni-helper/_base.scss */
+table th, table td {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+}
+/* line 185, bahmni-helper/_base.scss */
+table tr {
+  border: 1px solid #EEE;
+}
+/* line 189, bahmni-helper/_base.scss */
+table tr:nth-child(even) {
+  background: #FFFDF7;
+}
+/* line 193, bahmni-helper/_base.scss */
+table tr:nth-child(odd) {
+  background: white;
+}
+/* line 197, bahmni-helper/_base.scss */
+table tr.hover {
+  background: #75b2f0;
+  color: white;
+  cursor: pointer;
+}
+/* line 203, bahmni-helper/_base.scss */
+table tr.selected {
+  background: #007FFF;
+  color: white;
+}
+/* line 207, bahmni-helper/_base.scss */
+table tr.selected a {
+  color: white;
+}
+/* line 212, bahmni-helper/_base.scss */
+table thead th {
+  border-bottom: 1px solid #ddd;
+  background: #f3f3f3;
+  width: auto;
+  text-align: left;
+  word-break: normal;
+  font-weight: normal;
+  font-family: "OpenSansBold";
+}
+
+/* line 2, home/_errorLogs.scss */
+.error-log-wrapper table {
+  table-layout: fixed;
+}
+/* line 4, home/_errorLogs.scss */
+.error-log-wrapper table tr {
+  background: #fff;
+}
+/* line 8, home/_errorLogs.scss */
+.error-log-wrapper table th:nth-child(1) {
+  width: 20%;
+}
+/* line 11, home/_errorLogs.scss */
+.error-log-wrapper table th:nth-child(2) {
+  width: 10%;
+}
+/* line 14, home/_errorLogs.scss */
+.error-log-wrapper table th:nth-child(3) {
+  width: 10%;
+}
+/* line 18, home/_errorLogs.scss */
+.error-log-wrapper table td {
+  word-wrap: break-word;
+}
+/* line 20, home/_errorLogs.scss */
+.error-log-wrapper table td .stackTrace {
+  overflow: hidden;
+  max-height: 30px;
+}
+/* line 23, home/_errorLogs.scss */
+.error-log-wrapper table td .stackTrace.stackTraceMore {
+  overflow: auto;
+  padding-bottom: 15px;
+  max-height: 900px;
+  -webkit-transition: max-height 1.5s ease-in-out;
+  -moz-transition: max-height 1.5s ease-in-out;
+  transition: max-height 1.5s ease-in-out;
+}
+/* line 32, home/_errorLogs.scss */
+.error-log-wrapper table td .read-wrap {
+  background: #fff;
+  padding: 9px 0 5px;
+}
+/* line 35, home/_errorLogs.scss */
+.error-log-wrapper table td .read-wrap .read-wrap-ellipse {
+  display: block;
+  text-align: center;
+}
+/* line 40, home/_errorLogs.scss */
+.error-log-wrapper table td button.readButton {
+  padding: 2px 10px 3px;
+  background: #fff;
+  font-size: 12px;
+  margin-top: -14px;
+}
+/* line 45, home/_errorLogs.scss */
+.error-log-wrapper table td button.readButton:hover {
+  background: #DDD;
+}
+/* line 48, home/_errorLogs.scss */
+.error-log-wrapper table td button.readButton .more {
+  display: none;
+}
+/* line 52, home/_errorLogs.scss */
+.error-log-wrapper table td button.readButton.active .more {
+  display: block;
+}
+/* line 55, home/_errorLogs.scss */
+.error-log-wrapper table td button.readButton.active .less {
+  display: none;
+}

@@ -96,7 +96,7 @@ angular.module('bahmni.common.offline')
                             .from(addressHierarchyEntryTable)
                             .where(lf.op.and(
                                 addressHierarchyEntryTable.levelId.eq(level.addressHierarchyLevelId),
-                                params.strategy != 'SelectiveSync' ? addressHierarchyEntryTable.name.match(new RegExp(params.searchString, 'i')) : addressHierarchyEntryTable.name.eq(params.searchString)
+                                addressHierarchyEntryTable.name.match(new RegExp(params.searchString, 'i'))
                                 ))
                             .limit(params.limit).exec()
                             .then(
