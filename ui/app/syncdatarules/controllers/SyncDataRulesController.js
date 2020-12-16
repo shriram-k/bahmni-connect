@@ -83,6 +83,10 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             if (levelIndex == 0 && selectedLevelLength == 0) {
                 $scope.idsToShow = [];
                 $scope.idsToShow.push(getTargetID(levelIndex, false));
+            } else if (levelIndex == 0 && selectedLevelLength != 0) {
+                $scope.idsToShow = [];
+                $scope.idsToShow.push(getTargetID(levelIndex, false));
+                $scope.idsToShow.push(getTargetID(levelIndex, true));
             } else if (levelIndex != 0 && selectedLevelLength == 0) {
                 let indexToMatch = parseInt(levelIndex) + 1;
                 for (let key in $scope.addressesToFilter) {
@@ -141,7 +145,6 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
           levelIndex === "0"
         ) {
                     $scope.idsToShow.push(levelId);
-                    $scope.filterLevels(key);
                 }
             }
         };
@@ -397,7 +400,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
                     return a.name.localeCompare(b.name);
                 }
               );
-                $scope.addressesToFilter[`${level.name}_${index}`] = address;
+                $scope.addressesToFilter[`${level.name}_${index}`] = angular.copy(address);
                 $scope.updateSelectedItems(`${level.name}_${index}`);
                 $scope.loadState();
             });
