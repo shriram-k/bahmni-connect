@@ -340,33 +340,36 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
         };
 
         $scope.showDialog = function () {
-            setFilterConfig();
-            if ($scope.state.showValidationError) {
-                return;
-            }
+            if (!navigator.onLine) {
+                alert("Please Connect To Internet to Start Syncing");
+            } else {
+                setFilterConfig();
+                if ($scope.state.showValidationError) {
+                    return;
+                }
 
-            let categories = offlineService.getItem("eventLogCategories");
+                let categories = offlineService.getItem("eventLogCategories");
 
-            _.forEach(categories, function (category) {
-                if (category === "patient" || category === "encounter") {
-                    offlineDbService.getMarker(category).then(function (marker) {
-                        offlineDbService.insertMarker(
+                _.forEach(categories, function (category) {
+                    if (category === "patient" || category === "encounter") {
+                        offlineDbService.getMarker(category).then(function (marker) {
+                            offlineDbService.insertMarker(
               marker.markerName,
               marker.lastReadEventUuid,
               $scope.apiFilters
             );
-                    });
-                }
-            });
+                        });
+                    }
+                });
 
-            if ($window.localStorage.getItem("SyncFilterConfig") && $window.localStorage.getItem("SyncFilterConfig") != "undefined") {
-                $scope.changeSyncFilter =
+                if ($window.localStorage.getItem("SyncFilterConfig") && $window.localStorage.getItem("SyncFilterConfig") != "undefined") {
+                    $scope.changeSyncFilter =
         JSON.parse($window.localStorage.getItem("SyncFilterConfig")).toString() !== $scope.apiFilters.toString();
-            } else {
-                $scope.changeSyncFilter = false;
-            }
+                } else {
+                    $scope.changeSyncFilter = false;
+                }
 
-            $scope.changeSyncFilter
+                $scope.changeSyncFilter
         ? ngDialog.open({
             template: "views/deleteSyncDataConfirm.html",
             class: "ngdialog-theme-default",
@@ -376,6 +379,7 @@ angular.module("syncdatarules").controller("SyncDataRulesController", [
             scope: $scope
         })
         : $scope.startSync();
+            }
         };
 
         $scope.startSync = function () {
